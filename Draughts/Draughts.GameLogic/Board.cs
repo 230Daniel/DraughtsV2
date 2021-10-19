@@ -8,7 +8,7 @@ namespace Draughts.GameLogic
     {
         /// <summary>
         ///     Represents all of the playable tiles on the board.
-        ///     -1 = Nothing, 0 = Black man, 1 = White man, 2 = Black king, 3 = White king
+        ///     -1 = Nothing, 0 = Black pawn, 1 = White pawn, 2 = Black king, 3 = White king
         /// </summary>
         public int[][] Tiles { get; }
         
@@ -33,14 +33,23 @@ namespace Draughts.GameLogic
         {
             Tiles = new[]
             {
-                new [] { 0,  0,  0,  0 },
+                /*new [] { 0,  0,  0,  0 },
                 new [] { 0,  0,  0,  0 },
                 new [] { 0,  0,  0,  0 },
                 new [] { -1, -1, -1, -1 },
                 new [] { -1, -1, -1, -1 },
                 new [] { 1,  1,  1,  1 },
                 new [] { 1,  1,  1,  1 },
-                new [] { 1,  1,  1,  1 }
+                new [] { 1,  1,  1,  1 }*/
+                
+                new [] { -1, -1, -1, -1 },
+                new [] { -1,  1, -1,  0 },
+                new [] { -1, -1, -1, -1 },
+                new [] { -1,  1,  1, -1 },
+                new [] {  2, -1, -1, -1 },
+                new [] { -1,  1,  1, -1 },
+                new [] { -1, -1, -1, -1 },
+                new [] { -1, -1, -1, -1 }
             };
             Winner = -1;
             ValidMoves = GetValidMoves();
@@ -51,8 +60,13 @@ namespace Draughts.GameLogic
             var move = (origin, destination);
             if (!ValidMoves.Contains(move)) return false;
             
-            // Move the piece to the new tile
-            Tiles[destination.Item2][destination.Item1] = Tiles[origin.Item2][origin.Item1];
+            var tileValue = Tiles[origin.Item2][origin.Item1];
+            
+            // If a pawn has moved onto a home row, promote it
+            if (tileValue < 2 && destination.Item2 is 0 or 7)
+                tileValue += 2;
+            
+            Tiles[destination.Item2][destination.Item1] = tileValue;
             Tiles[origin.Item2][origin.Item1] = -1;
 
             // If the move was a take
@@ -60,8 +74,13 @@ namespace Draughts.GameLogic
             if (Math.Abs(yDifference) == 2)
             {
                 // Find the tile between the origin and destination and remove the piece
-                var halfYDifference = yDifference / 2;
-                Tiles[origin.Item2 + halfYDifference][origin.Item1 + halfYDifference] = -1;
+                var jumpedY = origin.Item2 + yDifference / 2;
+                
+                var jumpedX = destination.Item1 < origin.Item1
+                    ? origin.Item1 + jumpedY % 2 - 1  // If the jump was to the left
+                    : origin.Item1 + jumpedY % 2; // If the jump was to the right
+                
+                Tiles[jumpedY][jumpedX] = -1;
 
                 // If the piece that just moved has another taking move, let the player take another turn
                 ValidMoves = GetValidMoves(true).Where(x => x.Item1 == destination).ToList();
@@ -90,7 +109,7 @@ namespace Draughts.GameLogic
                     if (tile == -1 || tile % 2 != NextPlayer) continue;
                     
                     // Offset the value of X to account for the non-playable tile at the start of every other row
-                    var offsetX = x + y % 2;
+                    var offsetX = x + 1 - y % 2;
                     
                     // If the tile is black or a white king
                     if (tile % 2 == 0 || tile == 3)
