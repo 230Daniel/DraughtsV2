@@ -8,3 +8,6 @@ Draughts/.idea/
 # Compiled files
 Draughts/*/bin/
 Draughts/*/obj/
+
+# NPM Packages
+draughts.frontend/node_modules
