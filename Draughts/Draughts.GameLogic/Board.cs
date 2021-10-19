@@ -63,9 +63,9 @@ namespace Draughts.GameLogic
                 var halfYDifference = yDifference / 2;
                 Tiles[origin.Item2 + halfYDifference][origin.Item1 + halfYDifference] = -1;
 
-                // If there's another taking move return early
-                ValidMoves = GetValidMoves(true);
-                if (ValidMoves.Any()) return true;
+                // If the piece that just moved has another taking move, let the player take another turn
+                ValidMoves = GetValidMoves(true).Where(x => x.Item1 == destination).ToList();
+                if (ValidMoves.Count > 0) return true;
             }
             
             // Change the next player around and calculate the new valid moves
