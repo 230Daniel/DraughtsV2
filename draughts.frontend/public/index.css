@@ -8,10 +8,10 @@ body{
 }
 
 main{
-	min-height: 100vh;
+	min-height: calc(100vh - 60px);
 	overflow: auto;
 	background-color: #202020;
-	color: #ffffff;
+	color: #d0d0d0;
 }
 
 .container {
@@ -48,6 +48,7 @@ main{
 }
 
 .container > h1{
+	margin-top: 60px;
 	margin-bottom: 30px;
 }
 
