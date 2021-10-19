@@ -13,18 +13,18 @@ namespace Draughts.GameLogic
         public int[][] Tiles { get; }
         
         /// <summary>
-        ///     The player whose turn it is to move
+        ///     The player whose turn it is to move.
         ///     0 = Black, 1 = White
         /// </summary>
         public int NextPlayer { get; private set; }
         
         /// <summary>
-        ///     A list of moves which the next player could make
+        ///     A list of moves which the next player could make.
         /// </summary>
         public List<((int, int), (int, int))> ValidMoves { get; private set; }
 
         /// <summary>
-        ///     The player who won the game
+        ///     The player who won the game.
         ///     -1 = Currently playing, 0 = Black, 1 = White
         /// </summary>
         public int Winner { get; private set; }
@@ -96,26 +96,26 @@ namespace Draughts.GameLogic
                     if (tile % 2 == 0 || tile == 3)
                     {
                         // If there's a tile up and left
-                        if (y != 7 && offsetX != 0)
+                        if (y < 7 && offsetX > 0)
                         {
                             var newTile = Tiles[y + 1][offsetX - 1];
                             if (newTile == -1) singleMoves.Add(((x, y), (offsetX - 1, y + 1)));
                             
                             // If the piece on the new tile is an opponent's piece and there's an empty tile to jump over it to
-                            else if (newTile % 2 != NextPlayer && x != 0 && y < 6 && Tiles[y + 2][x - 1] == -1)
+                            else if (newTile % 2 != NextPlayer && x > 0 && y < 6 && Tiles[y + 2][x - 1] == -1)
                             {
                                 jumpingMoves.Add(((x, y), (x - 1, y + 2)));
                             }
                         }
                     
                         // If there's a tile up and right
-                        if (y != 7 && offsetX != 4)
+                        if (y < 7 && offsetX < 4)
                         {
                             var newTile = Tiles[y + 1][offsetX];
                             if (newTile == -1) singleMoves.Add(((x, y), (offsetX, y + 1)));
                             
                             // If the piece on the new tile is an opponent's piece and there's an empty tile to jump over it to
-                            else if (newTile % 2 != NextPlayer && x != 3 && y < 6 && Tiles[y + 2][x + 1] == -1)
+                            else if (newTile % 2 != NextPlayer && x < 3 && y < 6 && Tiles[y + 2][x + 1] == -1)
                             {
                                 jumpingMoves.Add(((x, y), (x + 1, y + 2)));
                             }
@@ -126,26 +126,26 @@ namespace Draughts.GameLogic
                     if (tile % 2 == 1 || tile == 2)
                     {
                         // If there's a tile down and left
-                        if (y != 0 && offsetX != 0)
+                        if (y > 0 && offsetX > 0)
                         {
                             var newTile = Tiles[y - 1][offsetX - 1];
                             if (newTile == -1) singleMoves.Add(((x, y), (offsetX - 1, y - 1)));
                             
                             // If the piece on the new tile is an opponent's piece and there's an empty tile to jump over it to
-                            else if (newTile % 2 != NextPlayer && x != 0 && y > 1 && Tiles[y - 2][x - 1] == -1)
+                            else if (newTile % 2 != NextPlayer && x > 0 && y > 1 && Tiles[y - 2][x - 1] == -1)
                             {
                                 jumpingMoves.Add(((x, y), (x - 1, y - 2)));
                             }
                         }
                     
                         // If there's a tile down and right
-                        if (y != 0 && offsetX != 4)
+                        if (y > 0 && offsetX < 4)
                         {
                             var newTile = Tiles[y - 1][offsetX];
                             if (newTile == -1) singleMoves.Add(((x, y), (offsetX, y - 1)));
                             
                             // If the piece on the new tile is an opponent's piece and there's an empty tile to jump over it to
-                            else if (newTile % 2 != NextPlayer && x != 3 && y > 1 && Tiles[y - 2][x + 1] == -1)
+                            else if (newTile % 2 != NextPlayer && x < 3 && y > 1 && Tiles[y - 2][x + 1] == -1)
                             {
                                 jumpingMoves.Add(((x, y), (x + 1, y - 2)));
                             }
@@ -154,14 +154,14 @@ namespace Draughts.GameLogic
                 }
             }
 
-            // If there are any jumping moves, all single moves would be invalid.
-            return ignoreSingleMoves || jumpingMoves.Any() ? jumpingMoves : singleMoves;
+            // If there are any jumping moves, all single moves would be invalid
+            return ignoreSingleMoves || jumpingMoves.Count > 0 ? jumpingMoves : singleMoves;
         }
         
         private void CheckForWinner()
         {
-            if (ValidMoves.Any()) return;
-            Winner = 1 - NextPlayer;
+            if (ValidMoves.Count == 0)
+                Winner = 1 - NextPlayer;
         }
     }
 }
