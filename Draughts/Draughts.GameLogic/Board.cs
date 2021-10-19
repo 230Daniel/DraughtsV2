@@ -33,14 +33,14 @@ namespace Draughts.GameLogic
         {
             Tiles = new[]
             {
-                new [] { 0,  0,  0,  0 },
-                new [] { 0,  0,  0,  0 },
-                new [] { 0,  0,  0,  0 },
+                new [] {  0,  0,  0,  0 },
+                new [] {  0,  0,  0,  0 },
+                new [] {  0,  0,  0,  0 },
                 new [] { -1, -1, -1, -1 },
                 new [] { -1, -1, -1, -1 },
-                new [] { 1,  1,  1,  1 },
-                new [] { 1,  1,  1,  1 },
-                new [] { 1,  1,  1,  1 }
+                new [] {  1,  1,  1,  1 },
+                new [] {  1,  1,  1,  1 },
+                new [] {  1,  1,  1,  1 }
             };
             Winner = -1;
             ValidMoves = GetValidMoves();
