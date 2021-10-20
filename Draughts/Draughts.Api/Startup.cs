@@ -52,12 +52,9 @@ namespace Draughts.Api
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment()) app.UseCors("Development");
-            else
-            {
-                app.UseCors("Production");
-            }
-            
-            app.UseRouting();
+            else app.UseCors("Production");
+
+                app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
