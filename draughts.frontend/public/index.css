@@ -8,9 +8,11 @@ body{
 }
 
 main{
+	display: flex;
 	min-height: calc(100vh - 60px);
 	overflow: auto;
 	background-color: #202020;
+	flex-direction: column;
 	color: #d0d0d0;
 }
 

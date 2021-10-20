@@ -17,7 +17,7 @@ namespace Draughts.Api.Controllers
         public IActionResult Get()
         {
             var tokens = _antiforgery.GetAndStoreTokens(HttpContext);
-            return StatusCode(200, tokens.RequestToken);
+            return Json(tokens.RequestToken);
         }
     }
 }

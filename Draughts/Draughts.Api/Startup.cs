@@ -1,3 +1,4 @@
+using Draughts.Api.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -13,17 +14,18 @@ namespace Draughts.Api
         {
             services.AddCors(options =>
             {
-                // In development we can tell the browser to ignore CORS because our site isn't actually on
-                // the internet and it's more convenient to not configure the origin on the frontend each time
+                // In development we need to specify that the React frontend (which runs on :3000) can make
+                // requests to this web API (which runs on :5001) because all requests will be cross-origin.
                 options.AddPolicy("Development",
                     builder =>
-                        builder.AllowAnyOrigin()
+                        builder.WithOrigins("http://localhost:3000")
                             .AllowAnyHeader()
                             .AllowAnyMethod()
+                            .AllowCredentials()
                             .Build());
 
-                // In production we tell the browser to only allow requests from our frontend
-                // which will be on the same origin (this web api behind /api/)
+                // In production we don't need to specify any origins because all requests will be same-site.
+                // This is because the api will be accessed by /api/ instead of a different port.
                 options.AddPolicy("Production", builder => builder.Build());
             });
             
@@ -38,9 +40,13 @@ namespace Draughts.Api
                 options.Cookie.SameSite = SameSiteMode.Strict;
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
             });
-            
-            services.AddControllers(options => 
+
+            services.AddMvc(options =>
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+            
+            services.AddControllers();
+
+            services.AddSignalR();
         }
         
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -55,6 +61,7 @@ namespace Draughts.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<DraughtsHub>("hub");
             });
         }
     }
