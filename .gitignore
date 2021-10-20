@@ -1,6 +1,10 @@
 # Configuration files
 Draughts/Draughts.Api/appsettings.json
 Draughts/Draughts.sln.DotSettings.*
+draughts.frontend/public/Config.js
+
+# Log files
+Draughts/Draughts.Api/Logs
 
 # IDE folders
 Draughts/.idea/
