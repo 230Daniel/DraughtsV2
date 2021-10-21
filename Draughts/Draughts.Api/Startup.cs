@@ -1,4 +1,5 @@
 using Draughts.Api.Hubs;
+using Draughts.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -47,6 +48,8 @@ namespace Draughts.Api
             services.AddControllers();
 
             services.AddSignalR();
+
+            services.AddSingleton<GameService>();
         }
         
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -54,7 +57,7 @@ namespace Draughts.Api
             if (env.IsDevelopment()) app.UseCors("Development");
             else app.UseCors("Production");
 
-                app.UseRouting();
+            app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

@@ -1,13 +1,15 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Loader from "react-loader-spinner";
-import { HubConnectionBuilder } from "@aspnet/signalr";
+import { HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
 
 import Footer from "./components/layout/Footer";
 import Navbar from "./components/layout/Navbar";
 import Index from "./pages/Index";
 
 import styles from "./App.module.css";
+import Play from "./pages/Play";
+import Game from "./pages/Game";
 
 export default class App extends React.Component{
 
@@ -36,7 +38,9 @@ export default class App extends React.Component{
 		if (this.state.status === "Ready") {
 			return(
 				<Switch>
-					<Route path="/" component={Index}/>
+					<Route exact path="/" component={Index}/>
+					<Route exact path="/play" component={Play}/>
+					<Route exact path="/game" component={Game}/>
 				</Switch>
 			);
 		}
@@ -60,9 +64,15 @@ export default class App extends React.Component{
 
 	async componentDidMount(){
 		await this.fetchAntiforgeryToken();
-		this.setState({status: "Connecting to the hub..."})
+		this.setState({status: "Connecting to the server..."})
 		await this.connectHub();
 		this.setState({status: "Ready"});
+	}
+
+	async componentWillUnmount(){
+		console.log("ey");
+		window._connection?.stop();
+		window._connection = undefined;
 	}
 
 	async fetchAntiforgeryToken(){
@@ -79,13 +89,28 @@ export default class App extends React.Component{
 		try {
 			var connection = new HubConnectionBuilder()
 				.withUrl(`${window._config.backend}/hub`, { headers: { "X-XSRF-TOKEN": window._antiForgeryToken, credentials: 'exclude' }})
+				.withAutomaticReconnect()
 				.build();
 
+			connection.onreconnecting((error) => this.onHubReconnecting(error));
+			connection.onreconnected((error) => this.onHubReconnected());
+
 			await connection.start();
-			window.connection = connection;
+			window._connection = connection;
 		} catch(ex) {
-			this.setState({status: "Error", error: "Failed to connect to the hub"});
+			this.setState({status: "Error", error: "Failed to connect to the server"});
 			throw ex;
 		}
+	}
+
+	async onHubReconnecting(error){
+		setTimeout(() => {
+			if(window._connection.state !== HubConnectionState.Connected)
+				this.setState({status: "Reconnecting to the server...", error: error ? error.toString() : null});
+		}, 1000);
+	}
+
+	async onHubReconnected(){
+		this.setState({status: "Ready"});
 	}
 }

@@ -1,0 +1,44 @@
+.container{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-grow: 1;
+}
+
+.form{
+	display: flex;
+	min-height: 50px;
+	width: min(500px, 100vw);
+	margin: 20px;
+	padding: 15px;
+
+	background-color: #313131;
+	border-radius: 5px;
+
+	flex-direction: column;
+	align-items: center;
+	color: white !important;
+}
+
+.title{
+	text-align: center;
+	font-size: 24px;
+	margin-bottom: 10px;
+	font-weight: initial;
+}
+
+.button{
+	margin-top: 10px;
+	background-color: #1e1e1e;
+	border: none;
+	color: white;
+	border-radius: 5px;
+	height: 36px;
+	width: 150px;
+	cursor: pointer;
+	font-size: 17px;
+}
+
+.button:hover{
+	border: 2px solid #565656;
+}

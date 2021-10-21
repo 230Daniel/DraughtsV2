@@ -1,6 +1,6 @@
 .container{
 	overflow: visible;
-	background-color: #3b3b3b;
+	background-color: #313131;
 }
 
 @media(min-width: 700px){
@@ -34,14 +34,16 @@
 	align-items: center;
 	flex-direction: row;
 	text-decoration: none !important;
-	margin-right: 30px;
 	color: #d0d0d0;
 	font-size: 30px;
 	height: 60px;
+	padding-left: 20px;
+	padding-right: 20px;
 }
 
 .brand:hover{
 	color: #ffffff;
+	background-color: #383838;
 }
 
 .logo{
@@ -58,8 +60,8 @@
 .items > *{
 	height: 100%;
 	display: flex;
-	padding-left: 10px;
-	padding-right: 10px;
+	padding-left: 15px;
+	padding-right: 15px;
 	align-items: center;
 	text-decoration: none;
 	color: #d0d0d0;
@@ -69,7 +71,7 @@
 
 .items > *:hover{
 	color: #ffffff;
-	background-color: #535353;
+	background-color: #383838;
 }
 
 .itemsColumn{
