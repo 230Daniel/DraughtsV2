@@ -70,7 +70,6 @@ export default class App extends React.Component{
 	}
 
 	async componentWillUnmount(){
-		console.log("ey");
 		window._connection?.stop();
 		window._connection = undefined;
 	}

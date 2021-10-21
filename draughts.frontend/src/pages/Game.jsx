@@ -19,7 +19,7 @@ export default class Game extends React.Component{
 		}
 
 		return(
-			<Board/>
+			<Board board={this.state.game.board} flip={false}/>
 		)
 	}
 
@@ -35,7 +35,6 @@ export default class Game extends React.Component{
 	handleOnGameStarted = (game) => this.onGameStarted(game);
 
 	onGameStarted(game){
-		console.log(this);
 		this.setState({game: game});
 	}
 }

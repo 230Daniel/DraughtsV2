@@ -1,18 +1,25 @@
 .tile{
 	display: flex;
 	flex-grow: 1;
-	background-color: #ffd27b;
 	color: black;
 	font-size: 18px;
-	display: flex;
 	align-items: center;
 	justify-content: center;
+	transition: background-color 0.05s;
 }
 
-.tile > *{
-	position: absolute;
+.white{
+	background-color: #ffd27b;
 }
 
-.unplayableTile{
+.black{
 	background-color: #986c39;
+}
+
+.selectable:hover{
+	background-color: #9dd0ad;
+}
+
+.selected{
+	background-color: #89b396 !important;
 }

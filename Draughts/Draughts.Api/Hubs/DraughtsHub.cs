@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Draughts.Api.Games;
+using AutoMapper;
+using Draughts.Api.Models;
 using Draughts.Api.Services;
 using Microsoft.AspNetCore.SignalR;
 
@@ -7,20 +8,22 @@ namespace Draughts.Api.Hubs
 {
     public class DraughtsHub : Hub
     {
+        private readonly IMapper _mapper;
         private readonly GameService _gameService;
         
-        public DraughtsHub(GameService gameService)
+        public DraughtsHub(IMapper mapper, GameService gameService)
         {
+            _mapper = mapper;
             _gameService = gameService;
         }
         
         [HubMethodName("CREATE_GAME")]
-        public Game CreateGame()
+        public GameModel CreateGame()
         {
             // Create a new game and add the player connection to it
             var game = _gameService.CreateGame(Context.ConnectionId);
             game.AddPlayer(Clients.Caller);
-            return game;
+            return _mapper.Map<GameModel>(game);
         }
 
         [HubMethodName("READY")]

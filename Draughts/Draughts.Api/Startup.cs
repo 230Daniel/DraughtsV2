@@ -1,3 +1,4 @@
+using Draughts.Api.Games;
 using Draughts.Api.Hubs;
 using Draughts.Api.Services;
 using Microsoft.AspNetCore.Builder;
@@ -50,6 +51,8 @@ namespace Draughts.Api
             services.AddSignalR();
 
             services.AddSingleton<GameService>();
+            services.AddTransient<Game>();
+            services.AddAutoMapper(typeof(Startup).Assembly);
         }
         
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)

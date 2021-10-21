@@ -1,14 +1,18 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Draughts.Api.Games;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Draughts.Api.Services
 {
     public class GameService
     {
+        private readonly IServiceProvider _serviceProvider;
         private Dictionary<string, Game> _games;
-
-        public GameService()
+        
+        public GameService(IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
             _games = new();
         }
         
@@ -18,7 +22,7 @@ namespace Draughts.Api.Services
             _games.Remove(connectionId);
             
             // Create a new game and add it to the dictionary
-            var game = new Game();
+            var game = _serviceProvider.GetRequiredService<Game>();
             _games.Add(connectionId, game);
             return game;
         }
