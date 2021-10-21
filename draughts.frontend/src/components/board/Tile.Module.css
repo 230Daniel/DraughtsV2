@@ -1,0 +1,18 @@
+.tile{
+	display: flex;
+	flex-grow: 1;
+	background-color: #ffd27b;
+	color: black;
+	font-size: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.tile > *{
+	position: absolute;
+}
+
+.unplayableTile{
+	background-color: #986c39;
+}
