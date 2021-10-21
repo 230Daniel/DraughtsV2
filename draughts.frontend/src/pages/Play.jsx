@@ -29,7 +29,7 @@ export default class Play extends React.Component{
 	}
 
 	async createGame(){
-		window._game = await window._connection.invoke("CREATE_GAME");
+		await window._connection.invoke("CREATE_GAME");
 		this.setState({redirect: "/game"});
 	}
 }

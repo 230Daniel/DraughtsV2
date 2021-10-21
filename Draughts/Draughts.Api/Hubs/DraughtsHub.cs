@@ -33,5 +33,12 @@ namespace Draughts.Api.Hubs
             var game = _gameService.GetGame(Context.ConnectionId);
             await game.OnReadyAsync();
         }
+
+        [HubMethodName("TAKE_MOVE")]
+        public async Task TakeMoveAsync(int[] origin, int[] destination)
+        {
+            var game = _gameService.GetGame(Context.ConnectionId);
+            await game.OnTakeMoveAsync((origin[0], origin[1]), (destination[0], destination[1]));
+        }
     }
 }

@@ -19,22 +19,29 @@ export default class Game extends React.Component{
 		}
 
 		return(
-			<Board board={this.state.game.board} flip={false}/>
+			<Board 
+				board={this.state.game.board} 
+				flip={false}
+				onMoveTaken={(origin, destination) => this.onBoardMoveTaken(origin, destination)}/>
 		)
 	}
 
 	async componentDidMount(){
-		window._connection.on("GAME_STARTED", this.handleOnGameStarted);
+		window._connection.on("GAME_UPDATED", this.handleOnGameUpdated);
 		await window._connection.invoke("READY");
 	}
 
 	componentWillUnmount(){
-		window._connection.off("GAME_STARTED", this.handleOnGameStarted);
+		window._connection.off("GAME_UPDATED", this.handleOnGameUpdated);
 	}
 
-	handleOnGameStarted = (game) => this.onGameStarted(game);
+	handleOnGameUpdated = (game) => this.onGameUpdated(game);
 
-	onGameStarted(game){
+	onGameUpdated(game){
 		this.setState({game: game});
+	}
+
+	async onBoardMoveTaken(origin, destination) {
+		await window._connection.invoke("TAKE_MOVE", origin, destination);
 	}
 }

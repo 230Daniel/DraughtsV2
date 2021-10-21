@@ -31,7 +31,13 @@ namespace Draughts.Api.Games
         {
             GameStatus = GameStatus.Playing;
             Board = new Board();
-            await _playerConnection.SendAsync("GAME_STARTED", GameModel);
+            await _playerConnection.SendAsync("GAME_UPDATED", GameModel);
+        }
+        
+        public async Task OnTakeMoveAsync((int, int) origin, (int, int) destination)
+        {
+            Board.TakeMove(origin, destination);
+            await _playerConnection.SendAsync("GAME_UPDATED", GameModel);
         }
     }
     

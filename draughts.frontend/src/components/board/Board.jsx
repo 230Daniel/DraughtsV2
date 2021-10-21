@@ -25,17 +25,19 @@ export default class Board extends React.Component{
 	renderRows(){
 		var rows = [];
 		
+		var i = 0;
 		for (var y = 0; y < 8; y++) {
 
 			var row = [];
 			for (var x = 0; x < 8; x++) {
 				
+				i++;
 				var playable = x % 2 !== y % 2;
 				if (playable) {
 
 					var offsetX = (x - 1 + y % 2) / 2;
 					var tile = this.props.board.tiles[y][offsetX];
-					var coords = [offsetX, y];
+					let coords = [offsetX, y];
 
 					var selectable = this.props.board.validMoves.some(move => areCoordinatesEqual(move[0], coords));
 					var selected = selectable && this.state.selectedTile ? areCoordinatesEqual(this.state.selectedTile, coords) : false;
@@ -47,19 +49,19 @@ export default class Board extends React.Component{
 						playable={true}
 						selectable={selectable}
 						selected={selected}
-						onClick={(coords) => this.onTileClicked(coords)} 
-						key={x}/>))
+						onClick={(tileCoords) => this.onTileClicked(tileCoords)} 
+						key={i}/>))
 				} else {
 					row.push((
 						<Tile
 							playable={false}
-							onClick={(coords) => this.onTileClicked(coords)} 
-							key={x}/>))
+							onClick={(tileCoords) => this.onTileClicked(tileCoords)} 
+							key={i}/>))
 				}
 			}
 
 			rows.push(
-				<div className={styles.row}>
+				<div className={styles.row} key={y}>
 					{this.props.flip ? row.reverse() : row}
 				</div>
 			);
@@ -79,9 +81,9 @@ export default class Board extends React.Component{
 			&& this.props.board.validMoves
 				.filter(move => areCoordinatesEqual(move[0], this.state.selectedTile))
 				.some(move => areCoordinatesEqual(move[1], coords));
-				
+		
 		if (completesMove) {
-			console.log(`Made move ${this.state.selectedTile} to ${coords}`)
+			this.props.onMoveTaken(this.state.selectedTile, coords);
 			this.setState({selectedTile: null});
 		} else {
 			var selectable = this.props.board.validMoves.some(move => areCoordinatesEqual(move[0], coords));
