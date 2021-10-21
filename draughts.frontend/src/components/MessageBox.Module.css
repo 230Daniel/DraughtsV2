@@ -1,14 +1,18 @@
 .container{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	height: 100%;
+	width: 100%;
 	display: flex;
-	align-items: center;
 	justify-content: center;
-	flex-grow: 1;
+	align-items: center;
 }
 
-.form{
+.messageBox{
 	display: flex;
 	min-height: 50px;
-	width: min(300px, 100vw);
+	min-width: 300px;
 	margin: 20px;
 	padding: 15px;
 
@@ -23,8 +27,16 @@
 .title{
 	text-align: center;
 	font-size: 24px;
-	margin-bottom: 10px;
 	font-weight: initial;
+}
+
+.message{
+	margin-top: 10px;
+	font-size: 18px;
+}
+
+.loader{
+	margin-top: 10px;
 }
 
 .button{

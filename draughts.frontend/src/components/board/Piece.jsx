@@ -8,15 +8,19 @@ export default class Piece extends React.Component{
 			return null;
 
 		return(
-			<div className={`
-				${styles.piece} 
-				${this.props.piece % 2 === 0 ? styles.black : styles.white}
-				${this.props.selected ? styles.selected : null}
-				`}>
+			<div className={this.getClassNames()}>
 				<div className={styles.inside}>
-
+					{this.props.piece >= 2 &&
+						<div className={styles.king}/>
+					}
 				</div>
 			</div>
 		)
+	}
+
+	getClassNames(){
+		var classNames = [styles.piece, this.props.piece % 2 === 0 ? styles.black : styles.white];
+		if(this.props.selected) classNames.push(styles.selected);
+		return classNames.join(" ");
 	}
 }

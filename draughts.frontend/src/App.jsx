@@ -1,22 +1,21 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Loader from "react-loader-spinner";
 import { HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
 
 import Footer from "./components/layout/Footer";
 import Navbar from "./components/layout/Navbar";
 import Index from "./pages/Index";
-
-import styles from "./App.module.css";
 import Play from "./pages/Play";
 import Game from "./pages/Game";
+
+import MessageBox from "./components/MessageBox";
 
 export default class App extends React.Component{
 
 	constructor(props){
 		super(props);
 		this.state = {
-			status: "Fetching anti-forgery token..."
+			status: "Connecting to the server..."
 		}
 	}
 
@@ -47,24 +46,21 @@ export default class App extends React.Component{
 
 		if(this.state.status === "Error"){
 			return(
-				<div className={styles.container}>
-					<h1>Something went wrong :(</h1>
-					<span className={styles.error}>{this.state.error}</span>
+				<div className="container">
+					<MessageBox title="Error" message={this.state.error}/>
 				</div>
 			);
 		}
 
 		return(
-			<div className={styles.container}>
-				<span>{this.state.status}</span>
-				<Loader color="#ffffff" type="ThreeDots"></Loader>
+			<div className="container">
+				<MessageBox title={this.state.status} load={true}/>
 			</div>
 		);
 	}
 
 	async componentDidMount(){
 		await this.fetchAntiforgeryToken();
-		this.setState({status: "Connecting to the server..."})
 		await this.connectHub();
 		this.setState({status: "Ready"});
 	}
@@ -97,7 +93,7 @@ export default class App extends React.Component{
 			await connection.start();
 			window._connection = connection;
 		} catch(ex) {
-			this.setState({status: "Error", error: "Failed to connect to the server"});
+			this.setState({status: "Error", error: "Failed to connect to the hub"});
 			throw ex;
 		}
 	}
