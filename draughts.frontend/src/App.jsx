@@ -19,6 +19,7 @@ export default class App extends React.Component {
 		};
 	}
 
+	// Render the main structure of the page including the navbar, content and footer
 	render() {
 		return (
 			<Router>
@@ -34,6 +35,7 @@ export default class App extends React.Component {
 	}
 
 	renderContent() {
+		// If everything is connected, render the page requested by the URL
 		if (this.state.status === "Ready") {
 			return (
 				<Switch>
@@ -44,6 +46,7 @@ export default class App extends React.Component {
 			);
 		}
 
+		// If something went wrong display an error message
 		if (this.state.status === "Error") {
 			return (
 				<div className="container">
@@ -52,6 +55,7 @@ export default class App extends React.Component {
 			);
 		}
 
+		// If we're still connecting display a loading message
 		return (
 			<div className="container">
 				<MessageBox title={this.state.status} load={true} />
@@ -60,17 +64,21 @@ export default class App extends React.Component {
 	}
 
 	async componentDidMount() {
+		// When the website is opened connect to the server
 		await this.fetchAntiforgeryToken();
 		await this.connectHub();
+
+		// If all goes well proceed to the main site
 		this.setState({ status: "Ready" });
 	}
 
 	async componentWillUnmount() {
+		// When the website is unloaded stop the connection
 		window._connection?.stop();
-		window._connection = undefined;
 	}
 
 	async fetchAntiforgeryToken() {
+		// An anti-forgery token must be fetched and then used in subsequent requests to protect the server against XSRF attacks
 		try {
 			var response = await fetch(`${window._config.backend}/antiforgery`);
 			window._antiForgeryToken = await response.json();
@@ -82,14 +90,17 @@ export default class App extends React.Component {
 
 	async connectHub() {
 		try {
+			// Connect to the SignalR hub of the server for 2-way communication
 			var connection = new HubConnectionBuilder()
-				.withUrl(`${window._config.backend}/hub`, { headers: { "X-XSRF-TOKEN": window._antiForgeryToken, credentials: 'exclude' } })
+				.withUrl(`${window._config.backend}/hub`, { headers: { "X-XSRF-TOKEN": window._antiForgeryToken } })
 				.withAutomaticReconnect()
 				.build();
 
+			// Register reconnecting and reconnected events to display loading messages while this occurs
 			connection.onreconnecting((error) => this.onHubReconnecting(error));
-			connection.onreconnected((error) => this.onHubReconnected());
+			connection.onreconnected(() => this.onHubReconnected());
 
+			// Start the connection and set the value on the window for other components to use
 			await connection.start();
 			window._connection = connection;
 		} catch (ex) {
@@ -99,6 +110,7 @@ export default class App extends React.Component {
 	}
 
 	async onHubReconnecting(error) {
+		// If the hub hasn't reconnected after 1 second display a loading message
 		setTimeout(() => {
 			if (window._connection.state !== HubConnectionState.Connected)
 				this.setState({ status: "Reconnecting to the server...", error: error ? error.toString() : null });
@@ -106,6 +118,7 @@ export default class App extends React.Component {
 	}
 
 	async onHubReconnected() {
+		// The hub has reconnected so return the user to the site
 		this.setState({ status: "Ready" });
 	}
 }

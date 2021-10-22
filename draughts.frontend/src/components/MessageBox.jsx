@@ -7,6 +7,7 @@ import styles from "./MessageBox.Module.css";
 
 export default class MessageBox extends React.Component {
 	render() {
+		// Render a message box using the props passed to the component
 		return (
 			<div className={styles.container}>
 				<div className={styles.messageBox}>

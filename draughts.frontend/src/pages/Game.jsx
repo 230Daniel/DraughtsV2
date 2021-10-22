@@ -13,12 +13,14 @@ export default class Game extends React.Component {
 	}
 
 	render() {
+		// If the state has been set to redirect the user, redirect them
 		if (this.state.redirect) {
 			return (
 				<Redirect to={this.state.redirect} />
 			);
 		}
 
+		// If the game hasn't been received from the server yet display a loading message
 		if (!this.state.game) {
 			return (
 				<div className="container">
@@ -27,6 +29,7 @@ export default class Game extends React.Component {
 			);
 		}
 
+		// Render the board and message box if necessary
 		return (
 			<div className="container">
 				<Board
@@ -39,6 +42,7 @@ export default class Game extends React.Component {
 	}
 
 	renderMessageBox() {
+		// If someone has won display a message box with the winner
 		if (this.state.game.board.winner !== -1) {
 			return (
 				<MessageBox title={`${this.state.game.board.winner === 0 ? "Black" : "White"} won!`} link="/play" linkLabel="Back" />
@@ -49,8 +53,12 @@ export default class Game extends React.Component {
 	}
 
 	async componentDidMount() {
+		// When the component mounts register a handler to the server's game updated event
 		window._connection.on("GAME_UPDATED", this.handleOnGameUpdated);
 
+		// Try to tell the server that we're ready to start
+		// If the server throws an error redirect the user to the play page
+		// (In case of an error it's likely they navigated straight to /game instead of /play)
 		try {
 			await window._connection.invoke("READY");
 		} catch {
@@ -59,16 +67,19 @@ export default class Game extends React.Component {
 	}
 
 	componentWillUnmount() {
+		// To avoid a memory leak, unregister the game updated event handler
 		window._connection.off("GAME_UPDATED", this.handleOnGameUpdated);
 	}
 
 	handleOnGameUpdated = (game) => this.onGameUpdated(game);
 
 	onGameUpdated(game) {
+		// When we receive a game updated event from the server, update the state with the new game
 		this.setState({ game: game });
 	}
 
 	async onBoardMoveTaken(origin, destination) {
+		// When the board tells us the player has taken a move, send it to the server
 		await window._connection.invoke("TAKE_MOVE", origin, destination);
 	}
 }

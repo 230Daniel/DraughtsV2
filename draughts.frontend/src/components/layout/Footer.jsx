@@ -3,13 +3,6 @@ import React from "react";
 import styles from "./Footer.module.css";
 
 export default class Footer extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			expanded: false
-		};
-	}
-
 	render() {
 		return (
 			<div className={styles.container}>

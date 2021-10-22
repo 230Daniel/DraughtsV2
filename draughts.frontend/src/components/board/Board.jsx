@@ -32,16 +32,23 @@ export default class Board extends React.Component {
 			for (var x = 0; x < 8; x++) {
 
 				i++;
+
+				// Check if the tile is one of the playable tiles,
+				// if it isn't then we can skip some expensive logic.
 				var playable = x % 2 !== y % 2;
 				if (playable) {
 
+					// Convert the actual X value into the condensed value the server uses
 					var offsetX = (x - 1 + y % 2) / 2;
-					var tile = this.props.board.tiles[ y ][ offsetX ];
-					let coords = [ offsetX, y ];
+					var tile = this.props.board.tiles[y][offsetX];
+					let coords = [offsetX, y];
 
-					var selectable = this.props.board.validMoves.some(move => areCoordinatesEqual(move[ 0 ], coords));
+					// Check if the valid moves allows this piece to be selectable
+					var selectable = this.props.board.validMoves.some(move => areCoordinatesEqual(move[0], coords));
+					// Check if this piece is the currently selected piece
 					var selected = selectable && this.state.selectedTile ? areCoordinatesEqual(this.state.selectedTile, coords) : false;
 
+					// Pass all of the calculated values to a Tile component and add it to the row
 					row.push((
 						<Tile
 							coords={coords}
@@ -72,21 +79,26 @@ export default class Board extends React.Component {
 
 	onTileClicked(coords) {
 
+		// A non-playable tile won't pass coordinates so unselect the previously selected tile and return
 		if (!coords) {
 			this.setState({ selectedTile: null });
 			return;
 		}
 
+		// Check to see if clicking this tile completes a move starting from the previously selected tile
 		var completesMove = this.state.selectedTile
 			&& this.props.board.validMoves
-				.filter(move => areCoordinatesEqual(move[ 0 ], this.state.selectedTile))
-				.some(move => areCoordinatesEqual(move[ 1 ], coords));
+				.filter(move => areCoordinatesEqual(move[0], this.state.selectedTile))
+				.some(move => areCoordinatesEqual(move[1], coords));
 
 		if (completesMove) {
+			// Tell the parent component (pages/Game) that the player has taken a move
 			this.props.onMoveTaken(this.state.selectedTile, coords);
 			this.setState({ selectedTile: null });
 		} else {
-			var selectable = this.props.board.validMoves.some(move => areCoordinatesEqual(move[ 0 ], coords));
+
+			// Check to see if this tile can be selected
+			var selectable = this.props.board.validMoves.some(move => areCoordinatesEqual(move[0], coords));
 
 			if (selectable) {
 				this.setState({ selectedTile: coords });
@@ -99,6 +111,7 @@ export default class Board extends React.Component {
 
 }
 
+// We can't compare two arrays with === because their references (memory pointers) will be compared, not their values
 function areCoordinatesEqual(a, b) {
-	return a[ 0 ] === b[ 0 ] && a[ 1 ] === b[ 1 ];
+	return a[0] === b[0] && a[1] === b[1];
 }

@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 
+// Adds props isMobile and isDesktop to any component which requests the information.
+// This component unfortunately has to use react hooks which are a lot harder to understand than Class components.
+
 export function withMediaQueries(Component) {
 	return function WithMediaQueriesComponent(props) {
 
-		var [ isMobile, setIsMobile ] = useState(window.matchMedia("(max-width: 700px)").matches);
+		var [isMobile, setIsMobile] = useState(window.matchMedia("(max-width: 700px)").matches);
 
 		useEffect(() => {
 

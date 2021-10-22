@@ -1,20 +1,29 @@
+<!--
+	This file is the barebones HTML file which react.js builds upon.
+	It doesn't contain any content, just meta information about the website.
+-->
+
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="theme-color" content="#000000" />
-		<meta
-			name="description"
-			content="An online Draughts game"
-		/>
-		<link rel="stylesheet" href="%PUBLIC_URL%/index.css" />
-		<script src="%PUBLIC_URL%/config.js"></script>
-		<title>Draughts</title>
-	</head>
-	<body>
-		<noscript>You need to enable JavaScript to run this app.</noscript>
-		<div id="root"></div>
-	</body>
+
+<head>
+	<meta charset="utf-8" />
+	<link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="theme-color" content="#000000" />
+	<meta name="description" content="An online Draughts game" />
+	<link rel="stylesheet" href="%PUBLIC_URL%/index.css" />
+	<script src="%PUBLIC_URL%/config.js"></script>
+	<title>Draughts</title>
+</head>
+
+<body>
+	<!--
+		The <noscript> element is shown if JavaScript is disabled.
+		If JavaScript is enabled then react.js will render the App.jsx component under the root div.
+	-->
+	<noscript>You need to enable JavaScript to run this app.</noscript>
+	<div id="root"></div>
+</body>
+
 </html>

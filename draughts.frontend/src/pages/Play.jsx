@@ -12,6 +12,7 @@ export default class Play extends React.Component {
 	}
 
 	render() {
+		// If the state has been set to redirect the user, redirect them
 		if (this.state.redirect) {
 			return (
 				<Redirect to={this.state.redirect} />
@@ -29,7 +30,11 @@ export default class Play extends React.Component {
 	}
 
 	async createGame(e) {
+
+		// Prevent the form from submitting in the normal way
 		e.preventDefault();
+
+		// Send a request to the server to create a game, then redirect the user to the game page
 		await window._connection.invoke("CREATE_GAME");
 		this.setState({ redirect: "/game" });
 	}
