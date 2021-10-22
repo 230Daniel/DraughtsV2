@@ -15,7 +15,7 @@ export default class Form extends React.Component {
 					{this.renderInputs()}
 				</form>
 			</div>
-		)
+		);
 	}
 
 	renderInputs() {

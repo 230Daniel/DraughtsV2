@@ -13,7 +13,7 @@ export default class Tile extends React.Component {
 						selected={this.props.selected} />
 				}
 			</div>
-		)
+		);
 	}
 
 	getClassNames() {

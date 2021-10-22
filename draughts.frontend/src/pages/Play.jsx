@@ -17,7 +17,7 @@ export default class Play extends React.Component {
 		if (this.state.redirect) {
 			return (
 				<Redirect to={this.state.redirect} />
-			)
+			);
 		}
 
 		return (

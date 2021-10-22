@@ -9,7 +9,7 @@ export default class Board extends React.Component {
 		super(props);
 		this.state = {
 			selectedTile: null
-		}
+		};
 	}
 
 	render() {
@@ -19,7 +19,7 @@ export default class Board extends React.Component {
 					{this.renderRows()}
 				</div>
 			</div>
-		)
+		);
 	}
 
 	renderRows() {
@@ -50,13 +50,13 @@ export default class Board extends React.Component {
 							selectable={selectable}
 							selected={selected}
 							onClick={(tileCoords) => this.onTileClicked(tileCoords)}
-							key={i} />))
+							key={i} />));
 				} else {
 					row.push((
 						<Tile
 							playable={false}
 							onClick={(tileCoords) => this.onTileClicked(tileCoords)}
-							key={i} />))
+							key={i} />));
 				}
 			}
 

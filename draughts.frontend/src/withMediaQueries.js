@@ -13,10 +13,10 @@ export function withMediaQueries(Component) {
 
 			return () => {
 				media.removeEventListener("change", onChange);
-			}
+			};
 
 		});
 
-		return <Component {...props} isMobile={isMobile} isDesktop={!isMobile} />
-	}
+		return <Component {...props} isMobile={isMobile} isDesktop={!isMobile} />;
+	};
 }

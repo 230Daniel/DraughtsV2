@@ -6,7 +6,7 @@ export default class FormButton extends React.Component {
 	render() {
 		return (
 			<button className={styles.button} type={this.props.type} onClick={(e) => this.onClick(e)}>{this.props.children}</button>
-		)
+		);
 	}
 
 	onClick(e) {

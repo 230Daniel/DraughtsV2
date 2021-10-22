@@ -16,7 +16,7 @@ export default class App extends React.Component {
 		super(props);
 		this.state = {
 			status: "Connecting to the server..."
-		}
+		};
 	}
 
 	render() {
@@ -30,7 +30,7 @@ export default class App extends React.Component {
 					<Footer />
 				</footer>
 			</Router>
-		)
+		);
 	}
 
 	renderContent() {

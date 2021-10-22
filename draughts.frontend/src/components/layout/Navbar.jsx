@@ -49,7 +49,7 @@ class Navbar extends React.Component {
 					</Expand>
 				}
 			</div>
-		)
+		);
 	}
 
 	renderItems() {
@@ -70,7 +70,7 @@ class Navbar extends React.Component {
 
 	onClick = () => {
 		this.setState({ expanded: false });
-	}
+	};
 }
 
 export default withMediaQueries(Navbar);

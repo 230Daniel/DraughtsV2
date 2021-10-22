@@ -35,7 +35,7 @@ export default class Game extends React.Component {
 					onMoveTaken={(origin, destination) => this.onBoardMoveTaken(origin, destination)} />
 				{this.renderMessageBox()}
 			</div>
-		)
+		);
 	}
 
 	renderMessageBox() {

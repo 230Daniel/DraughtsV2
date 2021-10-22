@@ -15,7 +15,7 @@ export default class Piece extends React.Component {
 					}
 				</div>
 			</div>
-		)
+		);
 	}
 
 	getClassNames() {
