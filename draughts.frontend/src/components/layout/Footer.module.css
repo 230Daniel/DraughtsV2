@@ -30,12 +30,15 @@
 	}
 }
 
-.githubSvg {
-	box-sizing: border-box;
-	filter: invert(93%) sepia(29%) saturate(0%) hue-rotate(132deg) brightness(92%) contrast(78%);
-	vertical-align: middle;
+.github {
+	height: 32px;
+	width: 32px;
+	
+	filter: invert(80%);
+	background: url("../../images/github.svg") center no-repeat;
+	background-size: 100%;
 }
 
-.githubSvg:hover {
-	filter: invert(100%) sepia(0%) saturate(7482%) hue-rotate(227deg) brightness(106%) contrast(107%);
+.github:hover {
+	filter: invert(100%);
 }

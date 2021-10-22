@@ -7,6 +7,10 @@ using Draughts.GameLogic;
 
 namespace Draughts.Api.Services
 {
+    /// <summary>
+    ///     Defines rules that IMapper follows to convert between different types.
+    ///     This is useful for converting complex classes into classes that can be sent over JSON to the frontend.
+    /// </summary>
     public class AutoMapperProfile : Profile
     {
         public AutoMapperProfile()
