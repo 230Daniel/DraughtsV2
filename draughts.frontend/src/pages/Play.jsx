@@ -1,9 +1,7 @@
 import React from "react";
 import { Redirect } from "react-router";
 
-import Form from "../components/form/Form";
-import FormButton from "../components/form/FormButton";
-import FormTitle from "../components/form/FormTitle";
+import styles from "./Play.Module.css";
 
 export default class Play extends React.Component {
 	constructor(props) {
@@ -21,14 +19,17 @@ export default class Play extends React.Component {
 		}
 
 		return (
-			<Form onSubmit={() => this.createGame()}>
-				<FormTitle>Play Draughts</FormTitle>
-				<FormButton type="submit">Create Game</FormButton>
-			</Form>
+			<div className={styles.container}>
+				<form className={styles.form} onSubmit={(e) => this.createGame(e)}>
+					<span className={styles.title}>Play Draughts</span>
+					<button className={styles.button} type="submit">Create Game</button>
+				</form>
+			</div>
 		);
 	}
 
-	async createGame() {
+	async createGame(e) {
+		e.preventDefault();
 		await window._connection.invoke("CREATE_GAME");
 		this.setState({ redirect: "/game" });
 	}
