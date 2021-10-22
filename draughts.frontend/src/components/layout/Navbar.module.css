@@ -1,99 +1,107 @@
-.container{
-	overflow: visible;
+.container {
 	background-color: #313131;
 }
 
-@media(min-width: 700px){
-	.container{
+@media (min-width: 700px) {
+	.container {
 		padding-left: 40px;
 		padding-right: 40px;
 	}
 }
 
-.bar{
+.bar {
 	display: flex;
 }
 
-.left{
+.left {
 	display: flex;
-	flex-direction: row;
 	float: left;
     width: 100%;
 	margin-left: 20px;
+	flex-direction: row;
 }
 
-.right{
+.right {
 	display: flex;
-	flex-direction: row;
 	margin-left: 20px;
 	margin-right: 20px;
+	flex-direction: row;
 }
 
 .brand {
 	display: flex;
-	align-items: center;
-	flex-direction: row;
-	text-decoration: none !important;
-	color: #d0d0d0;
-	font-size: 30px;
 	height: 60px;
 	padding-left: 20px;
 	padding-right: 20px;
+
+	color: #d0d0d0;
+	font-size: 30px;
+	text-decoration: none !important;
+
+	align-items: center;
+	flex-direction: row;
 }
 
-.brand:hover{
+.brand:hover {
 	color: #ffffff;
 	background-color: #383838;
 }
 
-.logo{
+.logo {
 	width: 40px;
 	height: 40px;
 	margin-right: 20px;
+
+	background: url("../../images/draughts.png") center no-repeat;
+	background-size: 100%;
 }
 
-.items{
+.items {
+	display: flex;
 	font-size: 16px;
-	display: flex;
 }
 
-.items > *{
-	height: 100%;
+.items > * {
 	display: flex;
+	height: 100%;
 	padding-left: 15px;
 	padding-right: 15px;
-	align-items: center;
-	text-decoration: none;
+
 	color: #d0d0d0;
+	text-decoration: none;
 	white-space: nowrap;
 	cursor: pointer;
+
+	align-items: center;
 }
 
-.items > *:hover{
+.items > *:hover {
 	color: #ffffff;
 	background-color: #383838;
 }
 
-.itemsColumn{
+.items.itemsColumn {
 	flex-direction: column;
 	align-items: unset !important;
 }
 
-.itemsColumn > *{
+.items.itemsColumn > * {
 	height: 50px;
 	width: unset;
 	padding-left: 20px;
 	padding-right: 0px;
 }
 
-.expandButton{
-	border: 0px;
-	background-color: unset;
+.expandButton {
 	display: flex;
+	height: 60px !important;
+	margin-left: 20px;
+	padding: 0px;
+	border: 0px;
+	
+	background-color: unset;
+	fill: #d0d0d0;
+	
 	align-items: center;
 	justify-content: center;
-	fill: #d0d0d0;
-	height: 60px !important;
-	padding: 0px;
-	margin-left: 20px;
 }

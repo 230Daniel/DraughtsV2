@@ -1,15 +1,16 @@
-.container{
+.container {
+	display: flex;
 	position: absolute;
 	top: 0px;
 	left: 0px;
 	height: 100%;
 	width: 100%;
-	display: flex;
+	
 	justify-content: center;
 	align-items: center;
 }
 
-.messageBox{
+.messageBox {
 	display: flex;
 	min-height: 50px;
 	min-width: 300px;
@@ -24,33 +25,34 @@
 	color: white !important;
 }
 
-.title{
+.title {
 	text-align: center;
 	font-size: 24px;
 	font-weight: initial;
 }
 
-.message{
+.message {
 	margin-top: 10px;
 	font-size: 18px;
 }
 
-.loader{
+.loader {
 	margin-top: 10px;
 }
 
-.button{
-	margin-top: 10px;
-	background-color: #1e1e1e;
-	border: none;
-	color: white;
-	border-radius: 5px;
+.button {
 	height: 36px;
 	width: 150px;
+	margin-top: 10px;
+	border: none;
+	
+	background-color: #1e1e1e;
+	color: white;
+	border-radius: 5px;
 	cursor: pointer;
 	font-size: 17px;
 }
 
-.button:hover{
+.button:hover {
 	border: 2px solid #565656;
 }

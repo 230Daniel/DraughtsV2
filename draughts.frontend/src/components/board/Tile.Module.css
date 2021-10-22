@@ -1,25 +1,27 @@
-.tile{
+.tile {
 	display: flex;
 	flex-grow: 1;
-	color: black;
-	font-size: 18px;
+
+	transition: background-color 0.08s;
+
 	align-items: center;
 	justify-content: center;
-	transition: background-color 0.08s;
+	color: black;
+	font-size: 18px;
 }
 
-.white{
+.white {
 	background-color: #ffd27b;
 }
 
-.black{
+.black {
 	background-color: #986c39;
 }
 
-.selectable:hover{
+.selectable:hover {
 	background-color: #9dd0ad;
 }
 
-.selected{
+.selected {
 	background-color: #89b396 !important;
 }

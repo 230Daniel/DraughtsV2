@@ -1,12 +1,11 @@
-.container{
+.container {
 	display: flex;
 	flex-grow: 1;
-	
 	align-items: center;
 	justify-content: center;
 }
 
-.board{
+.board {
 	display: flex;
 	flex-direction: column;
 	width: calc(100vh - 60px - 30px);
@@ -22,9 +21,9 @@
 	overflow: hidden;
 }
 
-.row{
+.row {
 	display: flex;
+	flex-grow: 1;
 	justify-content: stretch;
 	flex-direction: row;
-	flex-grow: 1;
 }

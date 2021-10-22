@@ -20,7 +20,7 @@ class Navbar extends React.Component{
 				<div className={styles.bar}>
 					<div className={styles.left}>
 						<Link to="/" className={styles.brand}>
-							<img className={styles.logo} alt="Draughts logo" src="/draughts.png"/>
+							<div className={styles.logo}/>
 							<span>Draughts</span>
 						</Link>
 						{this.props.isDesktop &&

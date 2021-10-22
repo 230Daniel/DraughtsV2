@@ -1,0 +1,66 @@
+.container {
+	display: flex;
+	flex-grow: 1;
+	margin: 20px;
+
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+}
+
+.image {
+	width: 25vw;
+	height: 25vw;
+	min-width: 200px;
+	min-height: 200px;
+	max-width: 300px;
+	max-height: 300px;
+	margin-right: 25px;
+
+	background: url("../images/draughts.png") no-repeat center;
+	background-size: 100%;
+}
+
+.textContainer {
+	display: flex;
+	margin-left: 25px;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.title {
+	margin: 0px;
+	font-weight: 100;
+	font-size: 80px;
+}
+
+.subtitle {
+	margin: 0px;
+	font-weight: 100;
+	font-size: 26px;
+}
+
+.link {
+	margin-top: 20px;
+	font-size: 20px;
+}
+
+@media (max-width: 800px) {
+	.container {
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	.image {
+		margin-right: 0px;
+	}
+
+	.textContainer {
+		margin-left: 0px;
+	}
+
+	.textContainer {
+		text-align: center;
+		align-items: center;
+	}
+}
