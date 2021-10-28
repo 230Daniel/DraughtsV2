@@ -35,7 +35,7 @@ export default class Play extends React.Component {
 		e.preventDefault();
 
 		// Send a request to the server to create a game, then redirect the user to the game page
-		await window._connection.invoke("CREATE_GAME");
-		this.setState({ redirect: "/game" });
+		var code = await window._connection.invoke("CREATE_GAME", { gameType: 1 });
+		this.setState({ redirect: `/game/${code}` });
 	}
 }

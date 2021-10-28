@@ -41,7 +41,7 @@ export default class App extends React.Component {
 				<Switch>
 					<Route exact path="/" component={Index} />
 					<Route exact path="/play" component={Play} />
-					<Route exact path="/game" component={Game} />
+					<Route exact path="/game/:gameCode" component={Game} />
 				</Switch>
 			);
 		}

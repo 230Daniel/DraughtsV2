@@ -25,7 +25,7 @@ namespace Draughts.Api.Services
                 );
             
             CreateMap<Board, BoardModel>();
-            CreateMap<Game, GameModel>();
+            CreateMap<IGame, GameModel>();
         }
     }
 }

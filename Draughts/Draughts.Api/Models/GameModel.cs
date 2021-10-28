@@ -1,10 +1,9 @@
-﻿using Draughts.Api.Games;
-
-namespace Draughts.Api.Models
+﻿namespace Draughts.Api.Models
 {
     public class GameModel
     {
-        public GameStatus GameStatus { get; init; }
+        public int Type { get; init; }
+        public int Status { get; init; }
         public BoardModel Board { get; init; }
     }
 }

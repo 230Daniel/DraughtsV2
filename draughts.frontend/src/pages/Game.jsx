@@ -1,15 +1,17 @@
 import React from "react";
-import { Redirect } from "react-router";
+import { Redirect, withRouter } from "react-router";
 
 import Board from "../components/board/Board";
 import MessageBox from "../components/MessageBox";
 
-export default class Game extends React.Component {
+class Game extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			game: null
+			game: null,
+			playerNumber: null
 		};
+		this.gameCode = this.props.match.params.gameCode;
 	}
 
 	render() {
@@ -29,12 +31,21 @@ export default class Game extends React.Component {
 			);
 		}
 
+		if (this.state.game.type === 1 && this.state.game.status === 1) {
+			return (
+				<div className="container">
+					<MessageBox minWidth="350px" title="Waiting for opponent..." message="Invite a friend using this game code" code={this.gameCode} link={"/play"} linkLabel={"Back"} />
+				</div>
+			);
+		}
+
 		// Render the board and message box if necessary
 		return (
 			<div className="container">
 				<Board
 					board={this.state.game.board}
-					flip={false}
+					flip={this.state.playerNumber === 0}
+					readonly={this.state.game.board.nextPlayer !== this.state.playerNumber}
 					onMoveTaken={(origin, destination) => this.onBoardMoveTaken(origin, destination)} />
 				{this.renderMessageBox()}
 			</div>
@@ -56,14 +67,12 @@ export default class Game extends React.Component {
 		// When the component mounts register a handler to the server's game updated event
 		window._connection.on("GAME_UPDATED", this.handleOnGameUpdated);
 
-		// Try to tell the server that we're ready to start
-		// If the server throws an error redirect the user to the play page
-		// (In case of an error it's likely they navigated straight to /game instead of /play)
-		try {
-			await window._connection.invoke("READY");
-		} catch {
+		var response = await window._connection.invoke("JOIN_GAME", this.gameCode);
+
+		if (!response.isSuccess)
 			this.setState({ redirect: "/play" });
-		}
+
+		this.setState({ playerNumber: response.playerNumber });
 	}
 
 	componentWillUnmount() {
@@ -80,6 +89,8 @@ export default class Game extends React.Component {
 
 	async onBoardMoveTaken(origin, destination) {
 		// When the board tells us the player has taken a move, send it to the server
-		await window._connection.invoke("TAKE_MOVE", origin, destination);
+		await window._connection.invoke("TAKE_MOVE", this.gameCode, origin, destination);
 	}
 }
+
+export default withRouter(Game);

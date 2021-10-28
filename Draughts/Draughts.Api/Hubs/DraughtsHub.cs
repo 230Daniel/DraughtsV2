@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
+using Draughts.Api.Games;
 using Draughts.Api.Models;
 using Draughts.Api.Services;
 using Microsoft.AspNetCore.SignalR;
@@ -18,27 +19,25 @@ namespace Draughts.Api.Hubs
         }
         
         [HubMethodName("CREATE_GAME")]
-        public GameModel CreateGame()
+        public string CreateGame(CreateGameModel createGameModel)
         {
-            // Create a new game and add the player connection to it
-            var game = _gameService.CreateGame(Context.ConnectionId);
-            game.AddPlayer(Clients.Caller);
-            return _mapper.Map<GameModel>(game);
+            var code = _gameService.CreateGame(createGameModel.GameType);
+            return code;
         }
 
-        [HubMethodName("READY")]
-        public async Task ReadyAsync()
+        [HubMethodName("JOIN_GAME")]
+        public async Task<JoinResponse> JoinGameAsync(string code)
         {
-            // Get this connection's game and call ready on it
-            var game = _gameService.GetGame(Context.ConnectionId);
-            await game.OnReadyAsync();
+            var game = _gameService.GetGame(code);
+            var joinResponse = await game.OnJoinAsync(Context.ConnectionId);
+            return joinResponse;
         }
 
         [HubMethodName("TAKE_MOVE")]
-        public async Task TakeMoveAsync(int[] origin, int[] destination)
+        public async Task TakeMoveAsync(string code, int[] origin, int[] destination)
         {
-            var game = _gameService.GetGame(Context.ConnectionId);
-            await game.OnTakeMoveAsync((origin[0], origin[1]), (destination[0], destination[1]));
+            var game = _gameService.GetGame(code);
+            await game.OnTakeMoveAsync(Context.ConnectionId, (origin[0], origin[1]), (destination[0], destination[1]));
         }
     }
 }

@@ -44,7 +44,7 @@ export default class Board extends React.Component {
 					let coords = [offsetX, y];
 
 					// Check if the valid moves allows this piece to be selectable
-					var selectable = this.props.board.validMoves.some(move => areCoordinatesEqual(move[0], coords));
+					var selectable = !this.props.readonly && this.props.board.validMoves.some(move => areCoordinatesEqual(move[0], coords));
 					// Check if this piece is the currently selected piece
 					var selected = selectable && this.state.selectedTile ? areCoordinatesEqual(this.state.selectedTile, coords) : false;
 
@@ -78,6 +78,10 @@ export default class Board extends React.Component {
 	}
 
 	onTileClicked(coords) {
+
+		if (this.props.readonly) {
+			return;
+		}
 
 		// A non-playable tile won't pass coordinates so unselect the previously selected tile and return
 		if (!coords) {

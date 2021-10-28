@@ -1,3 +1,4 @@
+using System;
 using Draughts.Api.Games;
 using Draughts.Api.Hubs;
 using Draughts.Api.Services;
@@ -50,8 +51,10 @@ namespace Draughts.Api
 
             services.AddSignalR();
 
+            services.AddSingleton<Random>();
             services.AddSingleton<GameService>();
-            services.AddTransient<Game>();
+            services.AddTransient<LocalMultiplayerGame>();
+            services.AddTransient<OnlineMultiplayerGame>();
             services.AddAutoMapper(typeof(Startup).Assembly);
         }
         
