@@ -2,8 +2,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Draughts.GameLogic", "Draughts.GameLogic\Draughts.GameLogic.csproj", "{2BA1DB61-244B-4496-BFC1-843E1F01EE7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Draughts.Console", "Draughts.Console\Draughts.Console.csproj", "{FCDEFF95-86FB-4766-9D34-71333945CF5E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Draughts.Api", "Draughts.Api\Draughts.Api.csproj", "{1A47FFD3-B6CD-4294-90C8-1065A50CC051}"
 EndProject
 Global
@@ -16,10 +14,6 @@ Global
 		{2BA1DB61-244B-4496-BFC1-843E1F01EE7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BA1DB61-244B-4496-BFC1-843E1F01EE7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BA1DB61-244B-4496-BFC1-843E1F01EE7F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FCDEFF95-86FB-4766-9D34-71333945CF5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FCDEFF95-86FB-4766-9D34-71333945CF5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FCDEFF95-86FB-4766-9D34-71333945CF5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FCDEFF95-86FB-4766-9D34-71333945CF5E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1A47FFD3-B6CD-4294-90C8-1065A50CC051}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1A47FFD3-B6CD-4294-90C8-1065A50CC051}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A47FFD3-B6CD-4294-90C8-1065A50CC051}.Release|Any CPU.ActiveCfg = Release|Any CPU
