@@ -13,7 +13,6 @@
 .messageBox {
 	display: flex;
 	min-height: 50px;
-	min-width: 300px;
 	margin: 20px;
 	padding: 15px;
 
@@ -32,8 +31,25 @@
 }
 
 .message {
-	margin-top: 10px;
+	margin-top: 15px;
+	font-size: 20px;
+}
+
+.code{
+	width: 100%;
+	margin: 10px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+
+	background-color: #1e1e1e;
+	border: 2px solid #1e1e1e;
+	border-radius: 5px;
 	font-size: 18px;
+	text-align: center;
+}
+
+.code:hover{
+	border: 2px solid #565656;
 }
 
 .loader {
@@ -44,7 +60,7 @@
 	height: 36px;
 	width: 150px;
 	margin-top: 10px;
-	border: none;
+	border: 2px solid #1e1e1e;
 	
 	background-color: #1e1e1e;
 	color: white;

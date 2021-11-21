@@ -56,7 +56,7 @@ class Game extends React.Component {
 		// If someone has won display a message box with the winner
 		if (this.state.game.board.winner !== -1) {
 			return (
-				<MessageBox title={`${this.state.game.board.winner === 0 ? "Black" : "White"} won!`} link="/play" linkLabel="Back" />
+				<MessageBox minWidth="350px" title={`${this.state.game.board.winner === 0 ? "Black" : "White"} won!`} link="/play" linkLabel="Back" />
 			);
 		} else {
 			return null;

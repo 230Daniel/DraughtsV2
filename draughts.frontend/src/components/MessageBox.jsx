@@ -10,9 +10,12 @@ export default class MessageBox extends React.Component {
 		// Render a message box using the props passed to the component
 		return (
 			<div className={styles.container}>
-				<div className={styles.messageBox}>
+				<div className={styles.messageBox} style={{ minWidth: this.props.minWidth }}>
 					<span className={styles.title}>{this.props.title}</span>
 					<span className={styles.message}>{this.props.message}</span>
+					{this.props.code &&
+						<span className={styles.code}>{this.props.code}</span>
+					}
 					{this.props.load &&
 						<Loader className={styles.loader} color="#ffffff" type="ThreeDots" height={30} />
 					}

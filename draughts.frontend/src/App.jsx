@@ -5,7 +5,7 @@ import { HubConnectionBuilder, HubConnectionState } from "@microsoft/signalr";
 import Footer from "./components/layout/Footer";
 import Navbar from "./components/layout/Navbar";
 import Index from "./pages/Index";
-import Play from "./pages/Play";
+import Play from "./pages/play/Play";
 import Game from "./pages/Game";
 
 import MessageBox from "./components/MessageBox";
@@ -40,7 +40,7 @@ export default class App extends React.Component {
 			return (
 				<Switch>
 					<Route exact path="/" component={Index} />
-					<Route exact path="/play" component={Play} />
+					<Route path="/play" component={Play} />
 					<Route exact path="/game/:gameCode" component={Game} />
 				</Switch>
 			);
