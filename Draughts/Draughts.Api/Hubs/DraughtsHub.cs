@@ -25,6 +25,13 @@ namespace Draughts.Api.Hubs
             return code;
         }
 
+        [HubMethodName("VALIDATE_GAME_CODE")]
+        public bool ValidateGameCode(string code)
+        {
+            var game = _gameService.GetGame(code);
+            return game is not null && game.IsJoinable;
+        }
+        
         [HubMethodName("JOIN_GAME")]
         public async Task<JoinResponse> JoinGameAsync(string code)
         {

@@ -7,6 +7,7 @@ namespace Draughts.Api.Games
     {
         int Type { get; }
         string Code { get; set; }
+        bool IsJoinable { get; }
         int Status { get; }
         Board Board { get; }
         

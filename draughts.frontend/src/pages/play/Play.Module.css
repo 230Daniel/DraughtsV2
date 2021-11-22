@@ -53,12 +53,13 @@
 	flex-grow: 1;
 	align-items: center;
 	justify-content: center;
+	flex-direction: row;
+	flex-wrap: wrap;
 }
 
-.form {
+.box{
 	display: flex;
-	min-height: 50px;
-	width: min(300px, 100vw);
+	width: min(400px, 100vw);
 	margin: 20px;
 	padding: 15px;
 
@@ -67,7 +68,16 @@
 
 	flex-direction: column;
 	align-items: center;
+	justify-content: center;
 	color: white !important;
+}
+
+.box > form{
+	display: flex;
+	width: 100%;
+
+	flex-direction: column;
+	align-items: center;
 }
 
 .title {
@@ -75,6 +85,53 @@
 	text-align: center;
 	font-size: 24px;
 	font-weight: initial;
+}
+
+.codeLabel{
+	font-size: 18px;
+	margin-top: 10px;
+}
+
+.codeLabel.invalid{
+	color: red;
+}
+
+.codeInput{
+	width: 100%;
+	margin-top: 10px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+
+	background-color: #1e1e1e;
+	border: 2px solid #1e1e1e;
+	border-radius: 5px;
+	transition: border 0.08s, color 0.08s;
+
+	font-size: 18px;
+	text-align: center;
+	text-transform: uppercase;
+	color: white;
+	outline: none !important;
+}
+
+.codeInput:focus, .codeInput:hover{
+	border: 2px solid #565656;
+}
+
+.codeInput.invalid{
+	border: 2px solid #ff0000 !important;
+	color: red;
+}
+
+.codeInput:disabled{
+	cursor: not-allowed;
+	user-select: none;
+	color: #a2a2a2;
+	border: 2px solid #1e1e1e;
+}
+
+.loader{
+	margin-top: 13px;
 }
 
 .button {

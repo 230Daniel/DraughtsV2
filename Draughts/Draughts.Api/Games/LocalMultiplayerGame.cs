@@ -17,6 +17,7 @@ namespace Draughts.Api.Games
         ///     1 = Playing
         /// </summary>
         public int Status { get; private set; }
+        public bool IsJoinable => Status == 0;
         public Board Board { get; private set; }
 
         private GameModel GameModel => _mapper.Map<GameModel>(this);
