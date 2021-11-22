@@ -7,17 +7,10 @@ namespace Draughts.Api.Games
     {
         int Type { get; }
         string Code { get; set; }
-        bool IsJoinable { get; }
-        int Status { get; }
         Board Board { get; }
-        
-        Task<JoinResponse> OnJoinAsync(string connectionId);
-        Task OnTakeMoveAsync(string connectionId, (int, int) origin, (int, int) destination);
-    }
 
-    public class JoinResponse
-    {
-        public bool IsSuccess { get; init; }
-        public int PlayerNumber { get; init; }
+        Task<bool> OnJoinAsync(string connectionId);
+        Task<int> OnReadyAsync(string connectionId);
+        Task OnTakeMoveAsync(string connectionId, (int, int) origin, (int, int) destination);
     }
 }

@@ -13,6 +13,7 @@ export default class OnlineMultiplayer extends React.Component {
 			joinGameCode: "",
 			joinGameCodeLocked: false
 		};
+		this.gameCode = null;
 	}
 
 	render() {
@@ -24,17 +25,7 @@ export default class OnlineMultiplayer extends React.Component {
 
 		return (
 			<div className={styles.container}>
-				<div className={styles.box}>
-					<span className={styles.title}>Create a game</span>
-					<form onSubmit={(e) => this.onSubmitCreateGame(e)}>
-						{!this.state.creatingGame &&
-							<button className={styles.button} type="submit">Submit</button>
-						}
-						{this.state.creatingGame &&
-							<Loader className={styles.loader} color="#ffffff" type="ThreeDots" height={30} />
-						}
-					</form>
-				</div>
+				{this.renderCreateGame()}
 				<div className={styles.box}>
 					<span className={styles.title}>Join a game</span>
 					<form>
@@ -59,15 +50,59 @@ export default class OnlineMultiplayer extends React.Component {
 		);
 	}
 
+	renderCreateGame() {
+		if (!this.state.createGameCode) {
+			return (
+				<div className={styles.box}>
+					<span className={styles.title}>Create a game</span>
+					<form onSubmit={(e) => this.onSubmitCreateGame(e)}>
+						{!this.state.creatingGame &&
+							<button className={styles.button} type="submit">Submit</button>
+						}
+						{this.state.creatingGame &&
+							<Loader className={styles.loader} color="#ffffff" type="ThreeDots" height={30} />
+						}
+					</form>
+				</div>
+			);
+		}
+
+		return (
+			<div className={styles.box}>
+				<span className={styles.title}>Waiting for opponent...</span>
+				<label className={styles.codeLabel}>Invite a friend using this game code:</label>
+				<input type="text" value={this.state.createGameCode} readOnly={true} className={styles.codeInput}></input>
+				<button className={styles.button} onClick={() => {
+					this.setState({ createGameCode: "" });
+					this.gameCode = null;
+				}}>Back</button>
+			</div >
+		);
+	}
+
+	componentDidMount() {
+		window._connection.on("GAME_STARTED", this.handleOnGameStarted);
+	}
+
+	componentWillUnmount() {
+		// To avoid a memory leak, unregister the game updated event handler
+		window._connection.off("GAME_STARTED", this.handleOnGameStarted);
+	}
+
 	async onJoinGameCodeChanged(e) {
 		var code = e.target.value.toUpperCase();
 
 		if (code.length === 6) {
 			this.setState({ joinGameCode: code, joiningGame: true, invalidGameCode: false });
-			var response = await window._connection.invoke("VALIDATE_GAME_CODE", code);
-			if (response) {
-				this.setState({ redirect: `/game/${code}` });
-			} else {
+
+			if (code == this.state.createGameCode) {
+				this.setState({ invalidGameCode: true, joiningGame: false });
+				return;
+			}
+
+			this.gameCode = code;
+			var response = await window._connection.invoke("JOIN_GAME", code);
+			if (!response) {
 				this.setState({ invalidGameCode: true, joiningGame: false });
 			}
 		} else {
@@ -80,6 +115,16 @@ export default class OnlineMultiplayer extends React.Component {
 
 		this.setState({ creatingGame: true });
 		var code = await window._connection.invoke("CREATE_GAME", { gameType: 1 });
-		this.setState({ redirect: `/game/${code}` });
+		this.gameCode = code;
+		await window._connection.invoke("JOIN_GAME", code);
+
+		this.setState({ creatingGame: false, createGameCode: code });
+	}
+
+	handleOnGameStarted = () => this.onGameStarted();
+
+	onGameStarted() {
+		if (!this.gameCode) return;
+		this.setState({ redirect: `/game/${this.gameCode}` });
 	}
 }

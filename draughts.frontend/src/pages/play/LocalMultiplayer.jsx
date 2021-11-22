@@ -9,6 +9,7 @@ export default class LocalMultiplayer extends React.Component {
 		this.state = {
 			redirect: null
 		};
+		this.gameCode = null;
 	}
 
 	render() {
@@ -26,7 +27,21 @@ export default class LocalMultiplayer extends React.Component {
 	}
 
 	async componentDidMount() {
+		window._connection.on("GAME_STARTED", this.handleOnGameStarted);
+
 		var code = await window._connection.invoke("CREATE_GAME", { gameType: 0 });
-		this.setState({ redirect: `/game/${code}` });
+		this.gameCode = code;
+		await window._connection.invoke("JOIN_GAME", code);
+	}
+
+	componentWillUnmount() {
+		// To avoid a memory leak, unregister the game updated event handler
+		window._connection.off("GAME_STARTED", this.handleOnGameStarted);
+	}
+
+	handleOnGameStarted = () => this.onGameStarted();
+
+	onGameStarted() {
+		this.setState({ redirect: `/game/${this.gameCode}` });
 	}
 }

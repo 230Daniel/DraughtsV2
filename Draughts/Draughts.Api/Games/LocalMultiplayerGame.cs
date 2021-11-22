@@ -11,13 +11,6 @@ namespace Draughts.Api.Games
     {
         public int Type => 0;
         public string Code { get; set; }
-        /// <summary>
-        ///     The status of this local multiplayer game
-        ///     0 = Waiting for player
-        ///     1 = Playing
-        /// </summary>
-        public int Status { get; private set; }
-        public bool IsJoinable => Status == 0;
         public Board Board { get; private set; }
 
         private GameModel GameModel => _mapper.Map<GameModel>(this);
@@ -27,6 +20,7 @@ namespace Draughts.Api.Games
         private readonly IMapper _mapper;
 
         private string _player;
+        private GameStatus _status;
 
         public LocalMultiplayerGame(IHubContext<DraughtsHub> hub, IMapper mapper)
         {
@@ -34,29 +28,42 @@ namespace Draughts.Api.Games
             _mapper = mapper;
         }
 
-        public async Task<JoinResponse> OnJoinAsync(string connectionId)
+        public async Task<bool> OnJoinAsync(string connectionId)
         {
-            if (Status != 0)
-                return new();
-
+            if (_status != GameStatus.WaitingForJoin) return false;
+            _status = GameStatus.WaitingForReady;
+            
             _player = connectionId;
             await _hub.Groups.AddToGroupAsync(connectionId, Code);
-            
-            Status = 1;
-            Board = new Board();
-            
-            await Client.SendAsync("GAME_UPDATED", GameModel);
+            await Client.SendAsync("GAME_STARTED");
 
-            return new() {IsSuccess = true};
+            return true;
+        }
+
+        public async Task<int> OnReadyAsync(string connectionId)
+        {
+            if (_status != GameStatus.WaitingForReady) return -1;
+            _status = GameStatus.Playing;
+            
+            Board = new Board();
+            await Client.SendAsync("GAME_UPDATED", GameModel);
+            return 0;
         }
 
         public async Task OnTakeMoveAsync(string connectionId, (int, int) origin, (int, int) destination)
         {
-            if (Status != 1 || connectionId != _player) return;
+            if (_status != GameStatus.Playing || connectionId != _player) return;
 
             // When the client submits a move, take it on the board and then send the game updated event
             Board.TakeMove(origin, destination);
             await Client.SendAsync("GAME_UPDATED", GameModel);
+        }
+
+        private enum GameStatus
+        {
+            WaitingForJoin,
+            WaitingForReady,
+            Playing
         }
     }
 }

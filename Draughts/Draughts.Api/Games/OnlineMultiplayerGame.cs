@@ -11,14 +11,6 @@ namespace Draughts.Api.Games
     {
         public int Type => 1;
         public string Code { get; set; }
-        /// <summary>
-        ///     The status of this online multiplayer game.
-        ///     0 = Waiting for player 1
-        ///     1 = Waiting for player 2
-        ///     2 = Playing
-        /// </summary>
-        public int Status { get; private set; }
-        public bool IsJoinable => Status is 1 or 2;
         public Board Board { get; private set; }
 
         private GameModel GameModel => _mapper.Map<GameModel>(this);
@@ -27,8 +19,9 @@ namespace Draughts.Api.Games
         private readonly IMapper _mapper;
         private readonly IHubContext<DraughtsHub> _hub;
         
-        private string _player1;
-        private string _player2;
+        private Player _player1;
+        private Player _player2;
+        private GameStatus _status;
 
         public OnlineMultiplayerGame(IHubContext<DraughtsHub> hub, IMapper mapper)
         {
@@ -36,44 +29,70 @@ namespace Draughts.Api.Games
             _mapper = mapper;
         }
 
-        public async Task<JoinResponse> OnJoinAsync(string connectionId)
+        public async Task<bool> OnJoinAsync(string connectionId)
         {
-            if (Status == 0)
+            if (_status != GameStatus.WaitingForJoin) return false;
+            
+            if (_player1 is null)
             {
-                _player1 = connectionId;
+                _player1 = new Player(connectionId);
                 await _hub.Groups.AddToGroupAsync(connectionId, Code);
-                
-                Status = 1;
-                await Clients.SendAsync("GAME_UPDATED", GameModel);
-                
-                return new() {IsSuccess = true, PlayerNumber = 0};
+                return true;
             }
             
-            if (Status == 1)
-            {
-                _player2 = connectionId;
-                await _hub.Groups.AddToGroupAsync(connectionId, Code);
-                
-                Status = 2;
-                Board = new Board();
-                await Clients.SendAsync("GAME_UPDATED", GameModel);
+            _player2 = new Player(connectionId);
+            _status = GameStatus.WaitingForReady;
+            await _hub.Groups.AddToGroupAsync(connectionId, Code);
+            await Clients.SendAsync("GAME_STARTED");
 
-                return new() {IsSuccess = true, PlayerNumber = 1};
-            }
-            
-            return new();
+            return true;
         }
 
+        public async Task<int> OnReadyAsync(string connectionId)
+        {
+            if (_status != GameStatus.WaitingForReady) return -1;
+            var playerNumber = connectionId == _player1.ConnectionId ? 0 : connectionId == _player2.ConnectionId ? 1 : -1;
+            if (playerNumber == 0) _player1.IsReady = true;
+            if (playerNumber == 1) _player2.IsReady = true;
+
+            if (_player1.IsReady && _player2.IsReady)
+            {
+                Board = new Board();
+                _status = GameStatus.Playing;
+                await Clients.SendAsync("GAME_UPDATED", GameModel);
+            }
+
+            return playerNumber;
+        }
+        
         public async Task OnTakeMoveAsync(string connectionId, (int, int) origin, (int, int) destination)
         {
-            if (Status != 2) return;
+            if (_status != GameStatus.Playing) return;
             
             var nextPlayer = Board.NextPlayer == 0 ? _player1 : _player2;
-            if (nextPlayer != connectionId) return;
+            if (nextPlayer.ConnectionId != connectionId) return;
             
             // When the client submits a move, take it on the board and then send the game updated event
             Board.TakeMove(origin, destination);
             await Clients.SendAsync("GAME_UPDATED", GameModel);
+        }
+
+        private enum GameStatus
+        {
+            WaitingForJoin,
+            WaitingForReady,
+            Playing
+        }
+
+        private class Player
+        {
+            public string ConnectionId { get; }
+            public bool IsReady { get; set; }
+
+            public Player(string connectionId)
+            {
+                ConnectionId = connectionId;
+            }
         }
     }
 }

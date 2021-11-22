@@ -1,6 +1,4 @@
 ﻿using System.Threading.Tasks;
-using AutoMapper;
-using Draughts.Api.Games;
 using Draughts.Api.Models;
 using Draughts.Api.Services;
 using Microsoft.AspNetCore.SignalR;
@@ -9,12 +7,10 @@ namespace Draughts.Api.Hubs
 {
     public class DraughtsHub : Hub
     {
-        private readonly IMapper _mapper;
         private readonly GameService _gameService;
         
-        public DraughtsHub(IMapper mapper, GameService gameService)
+        public DraughtsHub(GameService gameService)
         {
-            _mapper = mapper;
             _gameService = gameService;
         }
         
@@ -25,21 +21,22 @@ namespace Draughts.Api.Hubs
             return code;
         }
 
-        [HubMethodName("VALIDATE_GAME_CODE")]
-        public bool ValidateGameCode(string code)
+        [HubMethodName("JOIN_GAME")]
+        public async Task<bool> JoinGameAsync(string code)
         {
             var game = _gameService.GetGame(code);
-            return game is not null && game.IsJoinable;
+            if (game is null) return false;
+            return await game.OnJoinAsync(Context.ConnectionId);
         }
         
-        [HubMethodName("JOIN_GAME")]
-        public async Task<JoinResponse> JoinGameAsync(string code)
+        [HubMethodName("READY")]
+        public async Task<int> ReadyAsync(string code)
         {
             var game = _gameService.GetGame(code);
-            var joinResponse = await game.OnJoinAsync(Context.ConnectionId);
-            return joinResponse;
+            if (game is null) return -1;
+            return await game.OnReadyAsync(Context.ConnectionId);
         }
-
+        
         [HubMethodName("TAKE_MOVE")]
         public async Task TakeMoveAsync(string code, int[] origin, int[] destination)
         {

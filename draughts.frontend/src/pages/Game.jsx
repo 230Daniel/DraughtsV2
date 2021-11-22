@@ -31,13 +31,7 @@ class Game extends React.Component {
 			);
 		}
 
-		if (this.state.game.type === 1 && this.state.game.status === 1) {
-			return (
-				<div className="container">
-					<MessageBox minWidth="350px" title="Waiting for opponent..." message="Invite a friend using this game code" code={this.gameCode} link={"/play"} linkLabel={"Back"} />
-				</div>
-			);
-		}
+		var ableToTakeMove = this.state.game.type === 0 || this.state.game.board.nextPlayer === this.state.playerNumber;
 
 		// Render the board and message box if necessary
 		return (
@@ -45,7 +39,7 @@ class Game extends React.Component {
 				<Board
 					board={this.state.game.board}
 					flip={this.state.playerNumber === 0}
-					readonly={this.state.game.board.nextPlayer !== this.state.playerNumber}
+					readonly={!ableToTakeMove}
 					onMoveTaken={(origin, destination) => this.onBoardMoveTaken(origin, destination)} />
 				{this.renderMessageBox()}
 			</div>
@@ -67,12 +61,10 @@ class Game extends React.Component {
 		// When the component mounts register a handler to the server's game updated event
 		window._connection.on("GAME_UPDATED", this.handleOnGameUpdated);
 
-		var response = await window._connection.invoke("JOIN_GAME", this.gameCode);
+		var response = await window._connection.invoke("READY", this.gameCode);
+		if (response === -1) this.setState({ redirect: "/play" });
 
-		if (!response.isSuccess)
-			this.setState({ redirect: "/play" });
-
-		this.setState({ playerNumber: response.playerNumber });
+		this.setState({ playerNumber: response });
 	}
 
 	componentWillUnmount() {

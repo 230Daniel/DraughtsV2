@@ -55,12 +55,14 @@
 	justify-content: center;
 	flex-direction: row;
 	flex-wrap: wrap;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .box{
 	display: flex;
 	width: min(400px, 100vw);
-	margin: 20px;
+	margin: 10px;
 	padding: 15px;
 
 	background-color: #313131;
