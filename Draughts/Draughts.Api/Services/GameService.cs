@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Draughts.Api.Entities;
 using Draughts.Api.Games;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +14,7 @@ namespace Draughts.Api.Services
         private readonly IServiceProvider _serviceProvider;
         private readonly Random _random;
         private readonly char[] _codeCharacters;
-        private Dictionary<string, IGame> _games;
+        private ConcurrentDictionary<string, IGame> _games;
 
         public GameService(IServiceProvider serviceProvider, Random random)
         {
@@ -22,19 +24,20 @@ namespace Draughts.Api.Services
             _games = new();
         }
         
-        public string CreateGame(int gameType)
+        public string CreateGame(GameOptions options)
         {
-            IGame game = gameType switch
+            IGame game = options.GameType switch
             {
-                0 => _serviceProvider.GetRequiredService<LocalMultiplayerGame>(),
-                1 => _serviceProvider.GetRequiredService<OnlineMultiplayerGame>(),
-                _ => throw new ArgumentOutOfRangeException(nameof(gameType))
+                GameType.LocalMultiplayer => _serviceProvider.GetRequiredService<LocalMultiplayerGame>(),
+                GameType.OnlineMultiplayer => _serviceProvider.GetRequiredService<OnlineMultiplayerGame>(),
+                _ => throw new ArgumentOutOfRangeException(nameof(options.GameType))
             };
-
+            game.Options = options;
+            
             lock (_games)
             {
                 var code = GetCode();
-                _games.Add(code, game);
+                _games.TryAdd(code, game);
                 game.Code = code;
                 return code;
             }
@@ -43,6 +46,19 @@ namespace Draughts.Api.Services
         public IGame GetGame(string code)
         {
             return _games.GetValueOrDefault(code);
+        }
+
+        public IEnumerable<IGame> GetGamesForConnection(string connectionId)
+        {
+            return _games.Values.Where(x => x.PlayerConnectionIds.Contains(connectionId));
+        }
+
+        public void RemoveRedundantGames()
+        {
+            foreach (var redundantGame in _games.Where(x => x.Value.IsRedundant))
+            {
+                _games.TryRemove(redundantGame);
+            }
         }
 
         private string GetCode()

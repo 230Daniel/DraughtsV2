@@ -10,6 +10,8 @@ export default class OnlineMultiplayer extends React.Component {
 		this.state = {
 			redirect: null,
 
+			createGameSide: -1,
+
 			joinGameCode: "",
 			joinGameCodeLocked: false
 		};
@@ -36,6 +38,7 @@ export default class OnlineMultiplayer extends React.Component {
 							disabled={this.state.joiningGame}
 							onChange={(e) => this.onJoinGameCodeChanged(e)}
 							maxLength="6"
+							placeholder="ABCDEF"
 							className={`${styles.codeInput} ${this.state.invalidGameCode ? styles.invalid : null}`}>
 						</input>
 						{this.state.invalidGameCode &&
@@ -56,8 +59,18 @@ export default class OnlineMultiplayer extends React.Component {
 				<div className={styles.box}>
 					<span className={styles.title}>Create a game</span>
 					<form onSubmit={(e) => this.onSubmitCreateGame(e)}>
+						<div className={styles.inputGroup}>
+							<label>Play as side</label>
+							<select
+								value={this.state.createGameSide}
+								onChange={(e) => this.setState({ createGameSide: parseInt(e.target.value) })}>
+								<option value={-1}>Random</option>
+								<option value={0}>Black</option>
+								<option value={1}>White</option>
+							</select>
+						</div>
 						{!this.state.creatingGame &&
-							<button className={styles.button} type="submit">Submit</button>
+							<button className={styles.button} type="submit">Create</button>
 						}
 						{this.state.creatingGame &&
 							<Loader className={styles.loader} color="#ffffff" type="ThreeDots" height={30} />
@@ -72,10 +85,11 @@ export default class OnlineMultiplayer extends React.Component {
 				<span className={styles.title}>Waiting for opponent...</span>
 				<label className={styles.codeLabel}>Invite a friend using this game code:</label>
 				<input type="text" value={this.state.createGameCode} readOnly={true} className={styles.codeInput}></input>
-				<button className={styles.button} onClick={() => {
+				<button className={styles.button} onClick={async () => {
 					this.setState({ createGameCode: "" });
+					await window._connection.invoke("LEAVE_GAME", this.gameCode);
 					this.gameCode = null;
-				}}>Back</button>
+				}}>Cancel</button>
 			</div >
 		);
 	}
@@ -114,7 +128,7 @@ export default class OnlineMultiplayer extends React.Component {
 		e.preventDefault();
 
 		this.setState({ creatingGame: true });
-		var code = await window._connection.invoke("CREATE_GAME", { gameType: 1 });
+		var code = await window._connection.invoke("CREATE_GAME", { gameType: 1, side: this.state.createGameSide });
 		this.gameCode = code;
 		await window._connection.invoke("JOIN_GAME", code);
 

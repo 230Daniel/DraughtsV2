@@ -2,13 +2,17 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-evenly;
+	flex-wrap: wrap;
 	flex-grow: 1;
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 .mode{
 	position: relative;
 	top: 0px;
 	left: 0px;
+	margin: 10px;
 
 	display: flex;
 	flex-direction: column;
@@ -89,6 +93,45 @@
 	font-weight: initial;
 }
 
+
+.inputGroup{
+	background-color: #202020;
+	border: 2px solid #202020;
+	transition: border 0.08s;
+	border-radius: 5px;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	overflow: hidden;
+}
+
+.inputGroup:hover{
+	border: 2px solid #565656;
+}
+
+.inputGroup > *{
+	padding: 15px;
+	border: none;
+	font-size: 18px;
+}
+
+.inputGroup > *:nth-child(1){
+	width: 30%;
+	background-color: #191919;
+}
+
+.inputGroup > *:nth-child(2){
+	width: 70%;
+	background-color: #202020;
+	color: white;
+	outline: none !important;
+}
+
+.inputGroup > select > option{
+	background-color: #202020;
+	color: white;
+}
+
 .codeLabel{
 	font-size: 18px;
 	margin-top: 10px;
@@ -140,11 +183,15 @@
 	height: 36px;
 	width: 150px;
 	margin-top: 10px;
+	margin-bottom: -5px;
 	border: none;
 
 	background-color: #1e1e1e;
+	border: 2px solid #1e1e1e;
 	border-radius: 5px;
 	cursor: pointer;
+	transition: border 0.08s;
+
 	font-size: 17px;
 	color: white;
 }

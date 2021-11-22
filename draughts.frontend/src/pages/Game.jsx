@@ -9,7 +9,8 @@ class Game extends React.Component {
 		super(props);
 		this.state = {
 			game: null,
-			playerNumber: null
+			playerNumber: null,
+			playerLeft: false
 		};
 		this.gameCode = this.props.match.params.gameCode;
 	}
@@ -52,6 +53,10 @@ class Game extends React.Component {
 			return (
 				<MessageBox minWidth="350px" title={`${this.state.game.board.winner === 0 ? "Black" : "White"} won!`} link="/play" linkLabel="Back" />
 			);
+		} else if (this.state.playerLeft) {
+			return (
+				<MessageBox minWidth="350px" title="Error" message="Your opponent has disconnected" link="/play" linkLabel="Back" />
+			);
 		} else {
 			return null;
 		}
@@ -60,6 +65,7 @@ class Game extends React.Component {
 	async componentDidMount() {
 		// When the component mounts register a handler to the server's game updated event
 		window._connection.on("GAME_UPDATED", this.handleOnGameUpdated);
+		window._connection.on("PLAYER_LEFT", this.handleOnPlayerLeft);
 
 		var response = await window._connection.invoke("READY", this.gameCode);
 		if (response === -1) this.setState({ redirect: "/play" });
@@ -67,9 +73,13 @@ class Game extends React.Component {
 		this.setState({ playerNumber: response });
 	}
 
-	componentWillUnmount() {
+	async componentWillUnmount() {
 		// To avoid a memory leak, unregister the game updated event handler
 		window._connection.off("GAME_UPDATED", this.handleOnGameUpdated);
+		window._connection.off("PLAYER_LEFT", this.handlePlayerLeft);
+		try {
+			await window._connection.invoke("LEAVE_GAME", this.gameCode);
+		} catch { }
 	}
 
 	handleOnGameUpdated = (game) => this.onGameUpdated(game);
@@ -77,6 +87,12 @@ class Game extends React.Component {
 	onGameUpdated(game) {
 		// When we receive a game updated event from the server, update the state with the new game
 		this.setState({ game: game });
+	}
+
+	handleOnPlayerLeft = () => this.onPlayerLeft();
+
+	onPlayerLeft() {
+		this.setState({ playerLeft: true });
 	}
 
 	async onBoardMoveTaken(origin, destination) {

@@ -13,9 +13,6 @@ export default class MessageBox extends React.Component {
 				<div className={styles.messageBox} style={{ minWidth: this.props.minWidth }}>
 					<span className={styles.title}>{this.props.title}</span>
 					<span className={styles.message}>{this.props.message}</span>
-					{this.props.code &&
-						<span className={styles.code}>{this.props.code}</span>
-					}
 					{this.props.load &&
 						<Loader className={styles.loader} color="#ffffff" type="ThreeDots" height={30} />
 					}

@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using AutoMapper;
+using Draughts.Api.Entities;
 using Draughts.Api.Models;
 using Draughts.Api.Services;
 using Microsoft.AspNetCore.SignalR;
@@ -7,17 +10,20 @@ namespace Draughts.Api.Hubs
 {
     public class DraughtsHub : Hub
     {
+        private readonly IMapper _mapper;
         private readonly GameService _gameService;
-        
-        public DraughtsHub(GameService gameService)
+
+        public DraughtsHub(IMapper mapper, GameService gameService)
         {
+            _mapper = mapper;
             _gameService = gameService;
         }
         
         [HubMethodName("CREATE_GAME")]
         public string CreateGame(CreateGameModel createGameModel)
         {
-            var code = _gameService.CreateGame(createGameModel.GameType);
+            var options = _mapper.Map<GameOptions>(createGameModel);
+            var code = _gameService.CreateGame(options);
             return code;
         }
 
@@ -42,6 +48,25 @@ namespace Draughts.Api.Hubs
         {
             var game = _gameService.GetGame(code);
             await game.OnTakeMoveAsync(Context.ConnectionId, (origin[0], origin[1]), (destination[0], destination[1]));
+        }
+
+        [HubMethodName("LEAVE_GAME")]
+        public async Task LeaveGameAsync(string code)
+        {
+            var game = _gameService.GetGame(code);
+            if (game is null) return;
+            await game?.OnLeaveAsync(Context.ConnectionId);
+            _gameService.RemoveRedundantGames();
+        }
+        
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            var games = _gameService.GetGamesForConnection(Context.ConnectionId);
+            foreach (var game in games)
+            {
+                await game.OnLeaveAsync(Context.ConnectionId);
+            }
+            _gameService.RemoveRedundantGames();
         }
     }
 }

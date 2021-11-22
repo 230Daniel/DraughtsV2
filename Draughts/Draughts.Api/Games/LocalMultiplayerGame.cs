@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
+using Draughts.Api.Entities;
 using Draughts.Api.Hubs;
 using Draughts.Api.Models;
 using Draughts.GameLogic;
@@ -11,10 +14,13 @@ namespace Draughts.Api.Games
     {
         public int Type => 0;
         public string Code { get; set; }
+        public GameOptions Options { get; set; }
         public Board Board { get; private set; }
+        public IEnumerable<string> PlayerConnectionIds => new[] { _player };
+        public bool IsRedundant => _status == GameStatus.Redundant;
 
         private GameModel GameModel => _mapper.Map<GameModel>(this);
-        private IClientProxy Client => _hub.Clients.Group(Code);
+        private IClientProxy Clients => _hub.Clients.Group(Code);
         
         private readonly IHubContext<DraughtsHub> _hub;
         private readonly IMapper _mapper;
@@ -35,7 +41,7 @@ namespace Draughts.Api.Games
             
             _player = connectionId;
             await _hub.Groups.AddToGroupAsync(connectionId, Code);
-            await Client.SendAsync("GAME_STARTED");
+            await Clients.SendAsync("GAME_STARTED");
 
             return true;
         }
@@ -46,7 +52,7 @@ namespace Draughts.Api.Games
             _status = GameStatus.Playing;
             
             Board = new Board();
-            await Client.SendAsync("GAME_UPDATED", GameModel);
+            await Clients.SendAsync("GAME_UPDATED", GameModel);
             return 0;
         }
 
@@ -56,14 +62,24 @@ namespace Draughts.Api.Games
 
             // When the client submits a move, take it on the board and then send the game updated event
             Board.TakeMove(origin, destination);
-            await Client.SendAsync("GAME_UPDATED", GameModel);
+            if (Board.Winner != -1) _status = GameStatus.Finished;
+            await Clients.SendAsync("GAME_UPDATED", GameModel);
+        }
+
+        public async Task OnLeaveAsync(string connectionId)
+        {
+            if (_status == GameStatus.Redundant || !PlayerConnectionIds.Contains(connectionId)) return;
+            _status = GameStatus.Redundant;
+            await Clients.SendAsync("PLAYER_LEFT");
         }
 
         private enum GameStatus
         {
             WaitingForJoin,
             WaitingForReady,
-            Playing
+            Playing,
+            Finished,
+            Redundant
         }
     }
 }

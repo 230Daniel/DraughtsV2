@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
+using Draughts.Api.Entities;
 using Draughts.Api.Games;
 using Draughts.Api.Models;
 using Draughts.GameLogic;
@@ -26,6 +27,8 @@ namespace Draughts.Api.Services
             
             CreateMap<Board, BoardModel>();
             CreateMap<IGame, GameModel>();
+            CreateMap<CreateGameModel, GameOptions>()
+                .ForMember(entity => entity.CreatorSide, member => member.MapFrom(model => model.Side));
         }
     }
 }
