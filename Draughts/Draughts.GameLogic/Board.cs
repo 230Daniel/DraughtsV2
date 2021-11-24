@@ -24,10 +24,25 @@ namespace Draughts.GameLogic
         public List<((int, int), (int, int))> ValidMoves { get; private set; }
 
         /// <summary>
+        ///     A boolean which represents whether or not the next move must be a jump.
+        ///     This is useful for highlighting mandatory jump moves on the frontend.
+        /// </summary>
+        public bool NextMoveMustBeJump { get; private set; }
+
+        /// <summary>
+        ///     A list of moves which describes the current turn's moves.
+        ///     More than one move can be taken per turn if the player has jumped a piece and can jump again.
+        ///     This is useful for highlighting the previous move on the frontend.
+        /// </summary>
+        public List<((int, int), (int, int))> TurnMoves { get; private set; }
+
+        /// <summary>
         ///     The player who won the game.
         ///     -1 = Currently playing, 0 = Black, 1 = White
         /// </summary>
         public int Winner { get; private set; }
+        
+        private bool _shouldTurnMovesReset;
         
         public Board()
         {
@@ -44,12 +59,20 @@ namespace Draughts.GameLogic
             };
             Winner = -1;
             ValidMoves = GetValidMoves();
+            TurnMoves = new();
         }
 
         public bool TakeMove((int, int) origin, (int, int) destination)
         {
             var move = (origin, destination);
             if (!ValidMoves.Contains(move)) return false;
+
+            if (_shouldTurnMovesReset)
+            {
+                TurnMoves = new();
+                _shouldTurnMovesReset = false;
+            }
+            TurnMoves.Add((origin, destination));
             
             var tileValue = Tiles[origin.Item2][origin.Item1];
             
@@ -78,9 +101,10 @@ namespace Draughts.GameLogic
                 if (ValidMoves.Count > 0) return true;
             }
             
-            // Change the next player around and calculate the new valid moves
+            // Change the next player around, calculate the new valid moves, and set the flag 
             NextPlayer = 1 - NextPlayer;
             ValidMoves = GetValidMoves();
+            _shouldTurnMovesReset = true;
             CheckForWinner();
             return true;
         }
@@ -164,6 +188,7 @@ namespace Draughts.GameLogic
                 }
             }
 
+            NextMoveMustBeJump = jumpingMoves.Count > 0;
             // If there are any jumping moves, all single moves would be invalid
             return ignoreSingleMoves || jumpingMoves.Count > 0 ? jumpingMoves : singleMoves;
         }

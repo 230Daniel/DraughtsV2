@@ -110,7 +110,7 @@ export default class OnlineMultiplayer extends React.Component {
 		if (code.length === 6) {
 			this.setState({ joinGameCode: code, joiningGame: true, invalidGameCode: false });
 
-			if (code == this.state.createGameCode) {
+			if (code === this.state.createGameCode) {
 				this.setState({ invalidGameCode: true, joiningGame: false });
 				return;
 			}

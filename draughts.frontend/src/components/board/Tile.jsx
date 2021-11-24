@@ -14,6 +14,7 @@ export default class Tile extends React.Component {
 						piece={this.props.tile}
 						selected={this.props.selected} />
 				}
+				<div className={styles.destinationDot} />
 			</div>
 		);
 	}
@@ -25,6 +26,10 @@ export default class Tile extends React.Component {
 			var classNames = [styles.tile, styles.white];
 			if (this.props.selectable) classNames.push(styles.selectable);
 			if (this.props.selected) classNames.push(styles.selected);
+			if (this.props.previous) classNames.push(styles.previous);
+			if (this.props.forced) classNames.push(styles.forced);
+			if (this.props.destination) classNames.push(styles.destination);
+			if (this.props.forcedDestination) classNames.push(styles.forcedDestination);
 			return classNames.join(" ");
 		} else {
 			return `${styles.tile} ${styles.black}`;

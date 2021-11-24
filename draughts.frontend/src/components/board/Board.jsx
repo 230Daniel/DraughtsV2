@@ -25,6 +25,8 @@ export default class Board extends React.Component {
 	renderRows() {
 		var rows = [];
 
+		var possibleSelectedTileMoves = this.state.selectedTile && this.props.board.validMoves.filter(move => areCoordinatesEqual(move[0], this.state.selectedTile));
+
 		var i = 0;
 		for (var y = 0; y < 8; y++) {
 
@@ -45,8 +47,15 @@ export default class Board extends React.Component {
 
 					// Check if the valid moves allows this piece to be selectable
 					var selectable = !this.props.readonly && this.props.board.validMoves.some(move => areCoordinatesEqual(move[0], coords));
+					// Check if this piece can take another and thus must be moved
+					var forced = selectable && this.props.board.nextMoveMustBeJump;
 					// Check if this piece is the currently selected piece
 					var selected = selectable && this.state.selectedTile ? areCoordinatesEqual(this.state.selectedTile, coords) : false;
+					// Check if this tile was part of the previous move
+					var previous = this.props.board.turnMoves.some(move => areCoordinatesEqual(move[0], coords) || areCoordinatesEqual(move[1], coords));
+					// Check if the selected piece could move onto this tile
+					var destination = possibleSelectedTileMoves && possibleSelectedTileMoves.some(move => areCoordinatesEqual(move[1], coords));
+					var forcedDestination = destination && this.props.board.nextMoveMustBeJump;
 
 					// Pass all of the calculated values to a Tile component and add it to the row
 					row.push((
@@ -55,7 +64,11 @@ export default class Board extends React.Component {
 							tile={tile}
 							playable={true}
 							selectable={selectable}
+							forced={forced}
 							selected={selected}
+							previous={previous}
+							destination={destination}
+							forcedDestination={forcedDestination}
 							onClick={(tileCoords) => this.onTileClicked(tileCoords)}
 							key={i} />));
 				} else {
