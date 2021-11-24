@@ -11,6 +11,7 @@ export default class OnlineMultiplayer extends React.Component {
 			redirect: null,
 
 			createGameSide: -1,
+			createGameCode: null,
 
 			joinGameCode: "",
 			joinGameCodeLocked: false
@@ -42,7 +43,7 @@ export default class OnlineMultiplayer extends React.Component {
 							className={`${styles.codeInput} ${this.state.invalidGameCode ? styles.invalid : null}`}>
 						</input>
 						{this.state.invalidGameCode &&
-							<label className={`${styles.codeLabel} ${styles.invalid}`}>Invalid game code</label>
+							<label className={`${styles.codeLabel} ${styles.invalid}`}>{this.state.createGameCode === this.state.joinGameCode ? "👉( ͡≖ ͜ʖ ͡≖) 👉 nice try kiddo" : "Invalid game code"}</label>
 						}
 						{this.state.joiningGame &&
 							<Loader className={styles.loader} color="#ffffff" type="ThreeDots" height={30} />
@@ -84,7 +85,7 @@ export default class OnlineMultiplayer extends React.Component {
 			<div className={styles.box}>
 				<span className={styles.title}>Waiting for opponent...</span>
 				<label className={styles.codeLabel}>Invite a friend using this game code:</label>
-				<input type="text" value={this.state.createGameCode} readOnly={true} className={styles.codeInput}></input>
+				<span className={styles.codeInput}>{this.state.createGameCode}</span>
 				<button className={styles.button} onClick={async () => {
 					this.setState({ createGameCode: "" });
 					await window._connection.invoke("LEAVE_GAME", this.gameCode);

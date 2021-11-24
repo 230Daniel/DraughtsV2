@@ -123,8 +123,8 @@
 .inputGroup > *:nth-child(2){
 	width: 70%;
 	background-color: #202020;
-	color: white;
 	outline: none !important;
+	color: white;
 }
 
 .inputGroup > select > option{
@@ -157,6 +157,7 @@
 	text-transform: uppercase;
 	color: white;
 	outline: none !important;
+	cursor: text;
 }
 
 .codeInput:focus, .codeInput:hover{
