@@ -9,6 +9,8 @@ class Game extends React.Component {
 		super(props);
 		this.state = {
 			game: null,
+			board: null,
+			moveToAnimate: null,
 			playerNumber: null,
 			playerLeft: false
 		};
@@ -38,9 +40,10 @@ class Game extends React.Component {
 		return (
 			<div className="container">
 				<Board
-					board={this.state.game.board}
+					board={this.state.board}
+					moveToAnimate={this.state.moveToAnimate}
 					flip={this.state.playerNumber === 0}
-					readonly={!ableToTakeMove}
+					readonly={!ableToTakeMove || this.state.moveToAnimate}
 					onMoveTaken={(origin, destination) => this.onBoardMoveTaken(origin, destination)} />
 				{this.renderMessageBox()}
 			</div>
@@ -85,8 +88,23 @@ class Game extends React.Component {
 	handleOnGameUpdated = (game) => this.onGameUpdated(game);
 
 	onGameUpdated(game) {
-		// When we receive a game updated event from the server, update the state with the new game
+
+		if (!this.state.game) {
+			this.setState({ game: game, board: game.board });
+			return;
+		}
+
 		this.setState({ game: game });
+
+		var moveToAnimate = game.board.turnMoves.at(-1);
+		if (moveToAnimate) {
+			this.setState({ moveToAnimate: moveToAnimate });
+			setTimeout(() => {
+				this.setState({ board: game.board, moveToAnimate: null });
+			}, 210);
+		} else {
+			this.setState({ board: game.board });
+		}
 	}
 
 	handleOnPlayerLeft = () => this.onPlayerLeft();

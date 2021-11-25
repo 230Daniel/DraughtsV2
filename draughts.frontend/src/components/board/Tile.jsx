@@ -12,7 +12,10 @@ export default class Tile extends React.Component {
 				{this.props.playable &&
 					<Piece
 						piece={this.props.tile}
-						selected={this.props.selected} />
+						selected={this.props.selected}
+						transformX={this.props.pieceTransformX}
+						transformY={this.props.pieceTransformY}
+						taken={this.props.pieceTaken} />
 				}
 				<div className={styles.destinationDot} />
 			</div>

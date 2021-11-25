@@ -15,3 +15,6 @@ Draughts/*/obj/
 
 # NPM Packages
 draughts.frontend/node_modules
+
+# Production-ready builds
+draughts.frontend/build

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -13,7 +14,14 @@ namespace Draughts.Api
 {
     public class Startup
     {
-        public static void ConfigureServices(IServiceCollection services)
+        private readonly IConfiguration _configuration;
+        
+        public Startup(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+        
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors(options =>
             {
@@ -27,9 +35,14 @@ namespace Draughts.Api
                             .AllowCredentials()
                             .Build());
 
-                // In production we don't need to specify any origins because all requests will be same-site.
-                // This is because the api will be accessed by /api/ instead of a different port.
-                options.AddPolicy("Production", builder => builder.Build());
+                // In production we can specify origins via the config file.
+                options.AddPolicy("Production", 
+                    builder => 
+                        builder.WithOrigins(_configuration.GetSection("Cors").Get<string[]>())
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .AllowCredentials()
+                            .Build());
             });
             
             // We use an anti-forgery system to protect against CSRF attacks.
@@ -41,7 +54,7 @@ namespace Draughts.Api
             {
                 options.HeaderName = "X-XSRF-TOKEN";
                 options.Cookie.SameSite = SameSiteMode.Strict;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
             });
 
             services.AddMvc(options =>

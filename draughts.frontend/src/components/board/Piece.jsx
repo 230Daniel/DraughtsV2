@@ -10,11 +10,19 @@ export default class Piece extends React.Component {
 
 		// Render the piece, and if it's a king (value is 2 or 3) add a king div for the crown.
 		return (
-			<div className={this.getClassNames()}>
-				<div className={styles.inside}>
-					{this.props.piece >= 2 &&
-						<div className={styles.king} />
-					}
+			<div
+				className={styles.container}
+				style={{
+					transform: `translate(${this.props.transformX * 100}%, ${this.props.transformY * 100}%) scale(${this.props.taken ? 0 : 1})`,
+					opacity: this.props.taken ? 0 : 1,
+					zIndex: this.props.transformX === 0 ? 100 : 200
+				}}>
+				<div className={this.getClassNames()}>
+					<div className={styles.inside}>
+						{this.props.piece >= 2 &&
+							<div className={styles.king} />
+						}
+					</div>
 				</div>
 			</div>
 		);

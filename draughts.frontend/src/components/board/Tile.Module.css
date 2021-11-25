@@ -3,12 +3,10 @@
 	position: relative;
 	flex-grow: 1;
 
-	transition: background-color 0.08s;
+	transition: background-color 0.15s;
 
 	align-items: center;
 	justify-content: center;
-	color: black;
-	font-size: 18px;
 }
 
 .white {
@@ -29,6 +27,7 @@
 
 .selectable:hover, .destination:hover{
 	background-color: #9dd0ad;
+	transition: background-color 0.08s;
 }
 
 .destinationDot{
@@ -52,6 +51,7 @@
 
 .forced:hover, .forcedDestination:hover{
 	background-color: #b999c7;
+	transition: background-color 0.08s;
 }
 
 .forced.selected{
