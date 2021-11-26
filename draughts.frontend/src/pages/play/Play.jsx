@@ -14,8 +14,8 @@ export default class Play extends React.Component {
 				<Route exact path="/play/local-multiplayer" component={LocalMultiplayer} />
 				<Route exact path="/play/online-multiplayer" component={OnlineMultiplayer} />
 				<Route>
-					<div className="container">
-						<div className={styles.modes}>
+					<div className={styles.container}>
+						<div className={styles.row}>
 							<Mode link="/play/local-multiplayer" name="Local Multiplayer" image="/local-multiplayer.svg" />
 							<Mode link="/play/online-multiplayer" name="Online Multiplayer" image="/online-multiplayer.svg" />
 						</div>

@@ -1,3 +1,21 @@
+.container {
+	display: flex;
+	flex-grow: 1;
+
+	align-items: center;
+	justify-content: center;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.row{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+}
+
 .modes{
 	display: flex;
 	align-items: center;
@@ -12,7 +30,7 @@
 	position: relative;
 	top: 0px;
 	left: 0px;
-	margin: 10px;
+	margin: 20px;
 
 	display: flex;
 	flex-direction: column;
@@ -52,21 +70,10 @@
 	filter: invert(93%);
 }
 
-.container {
-	display: flex;
-	flex-grow: 1;
-	align-items: center;
-	justify-content: center;
-	flex-direction: row;
-	flex-wrap: wrap;
-	margin-top: 10px;
-	margin-bottom: 10px;
-}
-
 .box{
 	display: flex;
 	width: min(400px, 100vw);
-	margin: 10px;
+	margin: 20px;
 	padding: 15px;
 
 	background-color: #313131;

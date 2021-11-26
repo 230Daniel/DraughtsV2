@@ -28,27 +28,31 @@ export default class OnlineMultiplayer extends React.Component {
 
 		return (
 			<div className={styles.container}>
-				{this.renderCreateGame()}
-				<div className={styles.box}>
-					<span className={styles.title}>Join a game</span>
-					<form>
-						<label className={styles.codeLabel}>Enter game code</label>
-						<input
-							type="text"
-							value={this.state.joinGameCode}
-							disabled={this.state.joiningGame}
-							onChange={(e) => this.onJoinGameCodeChanged(e)}
-							maxLength="6"
-							placeholder="ABCDEF"
-							className={`${styles.codeInput} ${this.state.invalidGameCode ? styles.invalid : null}`}>
-						</input>
-						{this.state.invalidGameCode &&
-							<label className={`${styles.codeLabel} ${styles.invalid}`}>{this.state.createGameCode === this.state.joinGameCode ? "👉( ͡≖ ͜ʖ ͡≖) 👉 nice try kiddo" : "Invalid game code"}</label>
-						}
-						{this.state.joiningGame &&
-							<Loader className={styles.loader} color="#ffffff" type="ThreeDots" height={30} />
-						}
-					</form>
+				<div className={styles.row}>
+					<div className={styles.box}>
+						{this.renderCreateGame()}
+					</div>
+					<div className={styles.box}>
+						<span className={styles.title}>Join a game</span>
+						<form>
+							<label className={styles.codeLabel}>Enter game code</label>
+							<input
+								type="text"
+								value={this.state.joinGameCode}
+								disabled={this.state.joiningGame}
+								onChange={(e) => this.onJoinGameCodeChanged(e)}
+								maxLength="6"
+								placeholder="ABCDEF"
+								className={`${styles.codeInput} ${this.state.invalidGameCode ? styles.invalid : null}`}>
+							</input>
+							{this.state.invalidGameCode &&
+								<label className={`${styles.codeLabel} ${styles.invalid}`}>{this.state.createGameCode === this.state.joinGameCode ? "👉( ͡≖ ͜ʖ ͡≖) 👉 nice try kiddo" : "Invalid game code"}</label>
+							}
+							{this.state.joiningGame &&
+								<Loader className={styles.loader} color="#ffffff" type="ThreeDots" height={30} />
+							}
+						</form>
+					</div>
 				</div>
 			</div>
 		);
@@ -57,7 +61,7 @@ export default class OnlineMultiplayer extends React.Component {
 	renderCreateGame() {
 		if (!this.state.createGameCode) {
 			return (
-				<div className={styles.box}>
+				<>
 					<span className={styles.title}>Create a game</span>
 					<form onSubmit={(e) => this.onSubmitCreateGame(e)}>
 						<div className={styles.inputGroup}>
@@ -77,12 +81,12 @@ export default class OnlineMultiplayer extends React.Component {
 							<Loader className={styles.loader} color="#ffffff" type="ThreeDots" height={30} />
 						}
 					</form>
-				</div>
+				</>
 			);
 		}
 
 		return (
-			<div className={styles.box}>
+			<>
 				<span className={styles.title}>Waiting for opponent...</span>
 				<label className={styles.codeLabel}>Invite a friend using this game code:</label>
 				<span className={styles.codeInput}>{this.state.createGameCode}</span>
@@ -91,7 +95,7 @@ export default class OnlineMultiplayer extends React.Component {
 					await window._connection.invoke("LEAVE_GAME", this.gameCode);
 					this.gameCode = null;
 				}}>Cancel</button>
-			</div >
+			</>
 		);
 	}
 

@@ -139,6 +139,20 @@ export default class Board extends React.Component {
 		return this.props.flip ? rows.reverse() : rows;
 	}
 
+	componentDidUpdate(prevProps) {
+		// Prevent infinite update loop by only updating the 
+		// selected tile if the board has changed
+		if (this.props.board === prevProps.board) return;
+
+		// If all of the valid moves originate from the same tile
+		// we might as well select it to make for a smoother user experience
+		if (!this.props.readonly &&
+			this.props.board.validMoves.length > 0 &&
+			this.props.board.validMoves.every(move => areCoordinatesEqual(move[0], this.props.board.validMoves[0][0]))) {
+			this.setState({ selectedTile: this.props.board.validMoves[0][0] });
+		}
+	}
+
 	onTileClicked(coords) {
 
 		if (this.props.readonly) {
@@ -158,9 +172,12 @@ export default class Board extends React.Component {
 				.some(move => areCoordinatesEqual(move[1], coords));
 
 		if (completesMove) {
-			// Tell the parent component (pages/Game) that the player has taken a move
-			this.props.onMoveTaken(this.state.selectedTile, coords);
+			var tile = this.state.selectedTile;
 			this.setState({ selectedTile: null });
+
+			// Tell the parent component (pages/Game) that the player has taken a move
+			this.props.onMoveTaken(tile, coords);
+
 		} else {
 
 			// Check to see if this tile can be selected
