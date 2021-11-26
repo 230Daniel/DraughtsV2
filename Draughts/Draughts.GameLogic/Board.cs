@@ -77,9 +77,13 @@ namespace Draughts.GameLogic
             var tileValue = Tiles[origin.Item2][origin.Item1];
             
             // If a pawn has moved onto a home row, promote it
+            var promoted = false;
             if (tileValue < 2 && destination.Item2 is 0 or 7)
+            {
+                promoted = true;
                 tileValue += 2;
-            
+            }
+
             Tiles[destination.Item2][destination.Item1] = tileValue;
             Tiles[origin.Item2][origin.Item1] = -1;
 
@@ -97,8 +101,12 @@ namespace Draughts.GameLogic
                 Tiles[jumpedY][jumpedX] = -1;
 
                 // If the piece that just moved has another taking move, let the player take another turn
-                ValidMoves = GetValidMoves(true).Where(x => x.Item1 == destination).ToList();
-                if (ValidMoves.Count > 0) return true;
+                // This is not allowed if the piece was promoted this turn
+                if (!promoted)
+                {
+                    ValidMoves = GetValidMoves(true).Where(x => x.Item1 == destination).ToList();
+                    if (ValidMoves.Count > 0) return true;
+                }
             }
             
             // Change the next player around, calculate the new valid moves, and set the flag 
