@@ -55,7 +55,7 @@ namespace Draughts.Api.Hubs
         {
             var game = _gameService.GetGame(code);
             if (game is null) return;
-            await game?.OnLeaveAsync(Context.ConnectionId);
+            await game.OnLeaveAsync(Context.ConnectionId);
             _gameService.RemoveRedundantGames();
         }
         
