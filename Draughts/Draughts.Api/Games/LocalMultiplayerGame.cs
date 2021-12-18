@@ -39,6 +39,7 @@ namespace Draughts.Api.Games
             if (_status != GameStatus.WaitingForJoin) return false;
             _status = GameStatus.WaitingForReady;
             
+            // Set the player ID and tell the client to go to the game page
             _player = connectionId;
             await _hub.Groups.AddToGroupAsync(connectionId, Code);
             await Clients.SendAsync("GAME_STARTED");
@@ -51,6 +52,7 @@ namespace Draughts.Api.Games
             if (_status != GameStatus.WaitingForReady) return -1;
             _status = GameStatus.Playing;
             
+            // The client is now on the game page, start the game of Draughts
             Board = new Board();
             await Clients.SendAsync("GAME_UPDATED", GameModel);
             return 0;
@@ -60,7 +62,7 @@ namespace Draughts.Api.Games
         {
             if (_status != GameStatus.Playing || connectionId != _player) return;
 
-            // When the client submits a move, take it on the board and then send the game updated event
+            // When the client submits a move, pass it to the board and send the game updated event
             Board.TakeMove(origin, destination);
             if (Board.Winner != -1) _status = GameStatus.Finished;
             await Clients.SendAsync("GAME_UPDATED", GameModel);
@@ -70,6 +72,8 @@ namespace Draughts.Api.Games
         {
             if (_status == GameStatus.Redundant || !PlayerConnectionIds.Contains(connectionId)) return;
             _status = GameStatus.Redundant;
+            
+            // When the player disconnects tell all other clients that the player has left
             await Clients.SendAsync("PLAYER_LEFT");
         }
 

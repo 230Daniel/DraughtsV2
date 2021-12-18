@@ -44,16 +44,18 @@ namespace Draughts.Api.Games
 
             if (_player1 is null && _player2 is null)
             {
+                // If this is the first player to join set their side depending on the game options
                 var creatorSide = (int) Options.CreatorSide;
                 if (creatorSide == -1) creatorSide = _random.Next(0, 2);
 
                 if (creatorSide == 0) _player1 = new Player(connectionId);
                 else _player2 = new Player(connectionId);
-                await _hub.Groups.AddToGroupAsync(connectionId, Code);
                 
+                await _hub.Groups.AddToGroupAsync(connectionId, Code);
                 return true;
             }
             
+            // If this is the second player to join set their side to the opposite of the first player
             if (_player1 is null) _player1 = new Player(connectionId);
             else _player2 = new Player(connectionId);
             await _hub.Groups.AddToGroupAsync(connectionId, Code);
@@ -67,12 +69,15 @@ namespace Draughts.Api.Games
         public async Task<int> OnReadyAsync(string connectionId)
         {
             if (_status != GameStatus.WaitingForReady) return -1;
+            
+            // Depending on which player sent the ready signal, set that player to ready
             var playerNumber = connectionId == _player1.ConnectionId ? 0 : connectionId == _player2.ConnectionId ? 1 : -1;
             if (playerNumber == 0) _player1.IsReady = true;
             if (playerNumber == 1) _player2.IsReady = true;
 
             if (_player1.IsReady && _player2.IsReady)
             {
+                // If both players are ready start the game of Draughts
                 Board = new Board();
                 _status = GameStatus.Playing;
                 await Clients.SendAsync("GAME_UPDATED", GameModel);
@@ -98,6 +103,8 @@ namespace Draughts.Api.Games
         {
             if (_status == GameStatus.Redundant || !PlayerConnectionIds.Contains(connectionId)) return;
             _status = GameStatus.Redundant;
+            
+            // When a player disconnects tell all other clients that the player has left
             await Clients.SendAsync("PLAYER_LEFT");
         }
 
