@@ -1,21 +1,20 @@
-﻿namespace Draughts.Api.Entities
+﻿namespace Draughts.Api.Entities;
+
+public class GameOptions
 {
-    public class GameOptions
-    {
-        public GameType GameType { get; set; }
-        public CreatorSide CreatorSide { get; set; }
-    }
+    public GameType GameType { get; set; }
+    public CreatorSide CreatorSide { get; set; }
+}
 
-    public enum GameType
-    {
-        LocalMultiplayer,
-        OnlineMultiplayer
-    }
+public enum GameType
+{
+    LocalMultiplayer,
+    OnlineMultiplayer
+}
 
-    public enum CreatorSide
-    {
-        Random = -1,
-        Black = 0,
-        White = 1
-    }
+public enum CreatorSide
+{
+    Random = -1,
+    Black = 0,
+    White = 1
 }
