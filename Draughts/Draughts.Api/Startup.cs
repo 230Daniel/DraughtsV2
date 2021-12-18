@@ -1,4 +1,5 @@
 using System;
+using Draughts.Api.Engines;
 using Draughts.Api.Games;
 using Draughts.Api.Hubs;
 using Draughts.Api.Services;
@@ -68,6 +69,9 @@ public class Startup
         services.AddSingleton<GameService>();
         services.AddTransient<LocalMultiplayerGame>();
         services.AddTransient<OnlineMultiplayerGame>();
+        services.AddTransient<ComputerGame>();
+        services.AddTransient<MiniMaxEngine>();
+        services.AddTransient<RandomEngine>();
         services.AddAutoMapper(typeof(Startup).Assembly);
     }
         

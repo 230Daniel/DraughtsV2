@@ -61,6 +61,7 @@ class Navbar extends React.Component {
 				<Link to="/play">Play</Link>
 				<Link to="/play/local-multiplayer">Local</Link>
 				<Link to="/play/online-multiplayer">Online</Link>
+				<Link to="/play/computer">Computer</Link>
 			</>
 		);
 	}

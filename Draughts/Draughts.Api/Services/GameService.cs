@@ -30,6 +30,7 @@ public class GameService
         {
             GameType.LocalMultiplayer => _serviceProvider.GetRequiredService<LocalMultiplayerGame>(),
             GameType.OnlineMultiplayer => _serviceProvider.GetRequiredService<OnlineMultiplayerGame>(),
+            GameType.Computer => _serviceProvider.GetRequiredService<ComputerGame>(),
             _ => throw new ArgumentOutOfRangeException(nameof(options.GameType))
         };
         game.Options = options;

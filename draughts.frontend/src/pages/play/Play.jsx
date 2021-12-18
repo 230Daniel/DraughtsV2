@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 import LocalMultiplayer from "./LocalMultiplayer";
 import OnlineMultiplayer from "./OnlineMultiplayer";
+import Computer from "./Computer";
 
 import styles from "./Play.Module.css";
 
@@ -13,11 +14,13 @@ export default class Play extends React.Component {
 			<Switch>
 				<Route exact path="/play/local-multiplayer" component={LocalMultiplayer} />
 				<Route exact path="/play/online-multiplayer" component={OnlineMultiplayer} />
+				<Route exact path="/play/computer" component={Computer} />
 				<Route>
 					<div className={styles.container}>
 						<div className={styles.row}>
 							<Mode link="/play/local-multiplayer" name="Local Multiplayer" image="/local-multiplayer.svg" />
 							<Mode link="/play/online-multiplayer" name="Online Multiplayer" image="/online-multiplayer.svg" />
+							<Mode link="/play/computer" name="Computer" image="/computer.svg" />
 						</div>
 					</div>
 				</Route>

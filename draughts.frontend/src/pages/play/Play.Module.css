@@ -94,20 +94,23 @@
 }
 
 .title {
-	margin-bottom: 10px;
+	margin-bottom: 15px;
 	text-align: center;
 	font-size: 24px;
 	font-weight: initial;
 }
 
-
 .inputGroup{
-	background-color: #202020;
+	display: flex;
+	width: 100%;
+	margin-top: 5px;
+	margin-bottom: 10px;
 	border: 2px solid #202020;
+
+	background-color: #202020;
 	transition: border 0.08s;
 	border-radius: 5px;
-	width: 100%;
-	display: flex;
+	
 	justify-content: center;
 	overflow: hidden;
 }
@@ -141,7 +144,7 @@
 
 .codeLabel{
 	font-size: 18px;
-	margin-top: 10px;
+	margin-top: 5px;
 }
 
 .codeLabel.invalid{
@@ -151,6 +154,7 @@
 .codeInput{
 	width: 100%;
 	margin-top: 10px;
+	margin-bottom: 5px;
 	padding-top: 15px;
 	padding-bottom: 15px;
 
@@ -190,7 +194,7 @@
 .button {
 	height: 36px;
 	width: 150px;
-	margin-top: 10px;
+	margin-top: 5px;
 	margin-bottom: -5px;
 	border: none;
 
