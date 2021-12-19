@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
-using Draughts.Api.Engines;
 using Draughts.Api.Entities;
 using Draughts.Api.Hubs;
 using Draughts.Api.Models;
+using Draughts.Api.Services;
 using Draughts.GameLogic;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
@@ -72,14 +73,15 @@ public class ComputerGame : IGame
         // Set the computer engine to the selected opponent
         _engine = Options.Engine switch
         {
+            Engine.MiniMax => _services.GetRequiredService<MiniMaxEngine>(),
             Engine.Random => _services.GetRequiredService<RandomEngine>(),
-            Engine.MiniMax => throw new NotImplementedException(),
             _ => throw new ArgumentOutOfRangeException()
         };
+        _engine.Side = 1 - _humanPlayerSide;
         
         // If the computer goes first, start calculating a move
         if (Board.NextPlayer == 1 - _humanPlayerSide)
-            _ = TakeComputerMoveAsync();
+            await TakeComputerMoveAsync();
         
         return _humanPlayerSide;
     }
@@ -99,7 +101,7 @@ public class ComputerGame : IGame
 
         // If it's the computer's turn, start calculating a move
         if (Board.NextPlayer == 1 - _humanPlayerSide)
-            _ = TakeComputerMoveAsync();
+            await TakeComputerMoveAsync();
     }
 
     public async Task OnLeaveAsync(string connectionId)
@@ -115,14 +117,21 @@ public class ComputerGame : IGame
     {
         // This method should run in the background if not awaited
         await Task.Yield();
+        
+        // The computer can't take its move too quickly or the frontend won't be able to animate it properly
         var minimumDelay = Task.Delay(500);
-
-        var move = _engine.GetMove(Board, 1 - _humanPlayerSide);
+        
+        // Create a cancellation token which gets canceled after the maximum thinking time
+        var stoppingTokenSource = new CancellationTokenSource();
+        stoppingTokenSource.CancelAfter(Options.EngineThinkingTime);
+        
+        // Get the engine to calculate the best move in the time it has
+        var move = _engine.GetMove(Board, stoppingTokenSource.Token);
         
         await minimumDelay;
         await OnTakeMoveAsync("COMPUTER", move.Item1, move.Item2);
     }
-
+    
     private enum GameStatus
     {
         WaitingForJoin,

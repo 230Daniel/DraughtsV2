@@ -1,10 +1,13 @@
-﻿namespace Draughts.Api.Entities;
+﻿using System;
+
+namespace Draughts.Api.Entities;
 
 public class GameOptions
 {
     public GameType GameType { get; set; }
     public CreatorSide CreatorSide { get; set; }
     public Engine Engine { get; set; }
+    public TimeSpan EngineThinkingTime { get; set; }
 }
 
 public enum GameType
@@ -23,6 +26,6 @@ public enum CreatorSide
 
 public enum Engine
 {
-    Random = 0,
-    MiniMax = 1
+    MiniMax = 0,
+    Random = 1
 }

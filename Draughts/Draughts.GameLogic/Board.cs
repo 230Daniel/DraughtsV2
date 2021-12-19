@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Draughts.GameLogic;
 
@@ -10,7 +11,7 @@ public class Board
     ///     Represents all of the playable tiles on the board.
     ///     -1 = Nothing, 0 = Black pawn, 1 = White pawn, 2 = Black king, 3 = White king
     /// </summary>
-    public int[][] Tiles { get; }
+    public int[][] Tiles { get; private set; }
         
     /// <summary>
     ///     The player whose turn it is to move.
@@ -56,6 +57,15 @@ public class Board
             new [] {  1,  1,  1,  1 },
             new [] {  1,  1,  1,  1 },
             new [] {  1,  1,  1,  1 }
+            
+            /*new [] { -1, -1, -1, -1 },
+            new [] { -1, -1, -1, -1 },
+            new [] { -1,  0, -1, -1 },
+            new [] { -1,  1,  1, -1 },
+            new [] { -1, -1, -1, -1 },
+            new [] { -1, -1,  1, -1 },
+            new [] { -1, -1, -1, -1 },
+            new [] { -1, -1, -1, -1 }*/
         };
         Winner = -1;
         ValidMoves = GetValidMoves();
@@ -67,13 +77,16 @@ public class Board
         var move = (origin, destination);
         if (!ValidMoves.Contains(move)) return false;
 
-        if (_shouldTurnMovesReset)
+        if (TurnMoves is not null)
         {
-            TurnMoves = new();
-            _shouldTurnMovesReset = false;
+            if (_shouldTurnMovesReset)
+            {
+                TurnMoves = new();
+                _shouldTurnMovesReset = false;
+            }
+            TurnMoves.Add((origin, destination));
         }
-        TurnMoves.Add((origin, destination));
-            
+
         var tileValue = Tiles[origin.Item2][origin.Item1];
             
         // If a pawn has moved onto a home row, promote it
@@ -206,5 +219,17 @@ public class Board
         // If the next player has no valid moves, the other player has won
         if (ValidMoves.Count == 0)
             Winner = 1 - NextPlayer;
+    }
+
+    public Board Clone()
+    {
+        var newBoard = (Board) FormatterServices.GetSafeUninitializedObject(typeof(Board));
+        newBoard.Tiles = Tiles.Select(x => (int[]) x.Clone()).ToArray();
+        newBoard.Winner = Winner;
+        newBoard.NextPlayer = NextPlayer;
+        newBoard.ValidMoves = ValidMoves.ConvertAll(x => ((x.Item1.Item1, x.Item1.Item2), (x.Item2.Item1, x.Item2.Item2)));
+        newBoard.NextMoveMustBeJump = NextMoveMustBeJump;
+        newBoard._shouldTurnMovesReset = _shouldTurnMovesReset;
+        return newBoard;
     }
 }

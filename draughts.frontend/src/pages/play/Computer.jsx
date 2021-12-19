@@ -12,6 +12,7 @@ export default class Computer extends React.Component {
 
 			side: -1,
 			engine: 0,
+			engineThinkingTime: 2000
 		};
 		this.gameCode = null;
 	}
@@ -44,9 +45,26 @@ export default class Computer extends React.Component {
 								<select
 									value={this.state.engine}
 									onChange={(e) => this.setState({ engine: parseInt(e.target.value) })}>
-									<option value={0}>Random Moves</option>
+									<option value={0}>MiniMax</option>
+									<option value={1}>Random Moves</option>
 								</select>
 							</div>
+							{this.state.engine == 0 &&
+								<>
+									<div className={styles.inputGroup}>
+										<label>Thinking time</label>
+										<select
+											value={this.state.engineThinkingTime}
+											onChange={(e) => this.setState({ engineThinkingTime: parseInt(e.target.value) })}>
+											<option value={1000}>1 second</option>
+											<option value={2000}>2 seconds</option>
+											<option value={3000}>3 seconds</option>
+											<option value={4000}>4 seconds</option>
+											<option value={5000}>5 seconds</option>
+										</select>
+									</div>
+								</>
+							}
 							{!this.state.creatingGame &&
 								<button className={styles.button} type="submit">Create</button>
 							}
@@ -73,7 +91,7 @@ export default class Computer extends React.Component {
 		e.preventDefault();
 
 		this.setState({ creatingGame: true });
-		var code = await window._connection.invoke("CREATE_GAME", { gameType: 2, side: this.state.side, engine: this.state.engine });
+		var code = await window._connection.invoke("CREATE_GAME", { gameType: 2, side: this.state.side, engine: this.state.engine, engineThinkingTime: this.state.engineThinkingTime });
 		this.gameCode = code;
 		await window._connection.invoke("JOIN_GAME", code);
 	}

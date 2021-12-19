@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 using Draughts.Api.Entities;
@@ -24,6 +25,9 @@ public class AutoMapperProfile : Profile
                         new[] {move.Item2.Item1, move.Item2.Item2},
                     }).ToArray()
             );
+
+        CreateMap<int, TimeSpan>()
+            .ConvertUsing(integer => TimeSpan.FromMilliseconds(integer));
             
         CreateMap<Board, BoardModel>();
         CreateMap<IGame, GameModel>();
