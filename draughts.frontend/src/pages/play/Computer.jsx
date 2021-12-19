@@ -28,7 +28,7 @@ export default class Computer extends React.Component {
 			<div className={styles.container}>
 				<div className={styles.row}>
 					<div className={styles.box}>
-						<span className={styles.title}>Choose game options</span>
+						<span className={styles.title}>Create Computer Game (WIP)</span>
 						<form onSubmit={(e) => this.onSubmitCreateGame(e)}>
 							<div className={styles.inputGroup}>
 								<label>Play as side</label>
