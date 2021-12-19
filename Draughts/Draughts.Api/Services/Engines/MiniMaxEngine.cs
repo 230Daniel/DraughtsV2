@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Draughts.GameLogic;
+using Microsoft.Extensions.Logging;
 
 namespace Draughts.Api.Services
 {
@@ -10,11 +12,13 @@ namespace Draughts.Api.Services
     {
         public int Side { get; set; }
         
+        private readonly ILogger<MiniMaxEngine> _logger;
         private readonly Random _random;
         private readonly Queue<((int, int), (int, int))> _moveQueue;
-        
-        public MiniMaxEngine(Random random)
+
+        public MiniMaxEngine(ILogger<MiniMaxEngine> logger, Random random)
         {
+            _logger = logger;
             _random = random;
             _moveQueue = new();
         }
@@ -23,30 +27,38 @@ namespace Draughts.Api.Services
         {
             if (_moveQueue.TryDequeue(out var queuedMove))
                 return queuedMove;
+
+            _logger.LogInformation("Searching for the best move...");
+            var sw = Stopwatch.StartNew();
             
             var moves = GetFullMoves(board, Side, null);
+            var bestScore = 0;
             List<Move> bestMoves = new();
 
-            var depth = 2;
+            var depth = 0;
             while (!stoppingToken.IsCancellationRequested)
             {
-                depth++;
+                depth += 2;
                 try
                 {
                     var moveScores = new Dictionary<Move, int>();
                     foreach (var move in moves)
-                        moveScores[move] = MiniMax(move, depth, int.MinValue, int.MaxValue, true, stoppingToken);
+                        moveScores[move] = MiniMax(move, depth, int.MinValue, int.MaxValue, false, stoppingToken);
 
-                    var bestScore = moveScores.Max(x => x.Value);
+                    bestScore = moveScores.Max(x => x.Value);
                     bestMoves = moveScores.Where(x => x.Value == bestScore).Select(x => x.Key).ToList();
 
                     if (depth == 100) break;
                     moves.Sort((a, b) => moveScores[a].CompareTo(moveScores[b]));
                 }
-                catch (OperationCanceledException) { }
+                catch (OperationCanceledException)
+                {
+                    depth -= 2;
+                }
             }
-            
-            Console.WriteLine(depth);
+
+            sw.Stop();
+            _logger.LogInformation("Finished searching in {StopwatchElapsed}ms. Depth achieved: {Depth}, Best score: {BestScore}, Moves with this score: {BestMovesCount}", sw.ElapsedMilliseconds, depth, bestScore, bestMoves.Count);
 
             var bestMove = bestMoves[_random.Next(0, bestMoves.Count)];
             

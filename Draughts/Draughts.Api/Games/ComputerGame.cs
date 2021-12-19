@@ -115,6 +115,8 @@ public class ComputerGame : IGame
 
     private async Task TakeComputerMoveAsync()
     {
+        if (Board.Winner != -1) return;
+        
         // This method should run in the background if not awaited
         await Task.Yield();
         
