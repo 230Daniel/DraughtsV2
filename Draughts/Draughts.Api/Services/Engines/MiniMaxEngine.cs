@@ -48,8 +48,8 @@ namespace Draughts.Api.Services
                     bestScore = moveScores.Max(x => x.Value);
                     bestMoves = moveScores.Where(x => x.Value == bestScore).Select(x => x.Key).ToList();
 
-                    if (depth == 100) break;
-                    moves.Sort((a, b) => moveScores[a].CompareTo(moveScores[b]));
+                    if (depth == 16) break;
+                    moves.Sort((a, b) => -moveScores[a].CompareTo(moveScores[b]));
                 }
                 catch (OperationCanceledException)
                 {
@@ -112,7 +112,7 @@ namespace Draughts.Api.Services
             
             if (depth == 0 || board.Winner != -1)
             {
-                return RateBoard(board);
+                return RateBoard(board, depth);
             }
 
             if (maximising)
@@ -144,24 +144,43 @@ namespace Draughts.Api.Services
             }
         }
 
-        private int RateBoard(Board board)
+        private int RateBoard(Board board, int depth)
         {
-            if (board.Winner == Side) return int.MaxValue;
-            if (board.Winner == 1 - Side) return int.MinValue;
+            if (board.Winner == Side) return int.MaxValue - 16 + depth;
+            if (board.Winner == 1 - Side) return int.MinValue + 16 - depth;
             
             var pieceScore = 0;
+            var advancementScore = 0;
+            
             for (var y = 0; y < 8; y++)
             {
                 for (var x = 0; x < 4; x++)
                 {
                     var tile = board.Tiles[y][x];
                     if (tile == -1) continue;
+
+                    var advancement = tile > 1 
+                        ? 7 
+                        : tile % 2 == 0
+                            ? y
+                            : 7 - y;
                     
-                    if (board.Tiles[y][x] % 2 == Side) pieceScore++;
-                    else pieceScore--;
+                    if (advancement == 0) advancement = 7;
+
+                    if (board.Tiles[y][x] % 2 == Side)
+                    {
+                        pieceScore ++;
+                        advancementScore += advancement;
+                    }
+                    else
+                    {
+                        pieceScore --;
+                        advancementScore -= advancement;
+                    }
                 }
             }
-            return pieceScore;
+            
+            return pieceScore * 10 + advancementScore;
         }
 
         private class Move
