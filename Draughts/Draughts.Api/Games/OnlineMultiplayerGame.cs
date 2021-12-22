@@ -86,7 +86,7 @@ public class OnlineMultiplayerGame : IGame
         return playerNumber;
     }
         
-    public async Task OnTakeMoveAsync(string connectionId, (int, int) origin, (int, int) destination)
+    public async Task OnTakeMoveAsync(string connectionId, Coords origin, Coords destination)
     {
         if (_status != GameStatus.Playing) return;
             

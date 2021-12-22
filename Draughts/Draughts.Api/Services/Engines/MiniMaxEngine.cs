@@ -14,7 +14,7 @@ namespace Draughts.Api.Services
         
         private readonly ILogger<MiniMaxEngine> _logger;
         private readonly Random _random;
-        private readonly Queue<((int, int), (int, int))> _moveQueue;
+        private readonly Queue<Move> _moveQueue;
 
         public MiniMaxEngine(ILogger<MiniMaxEngine> logger, Random random)
         {
@@ -23,92 +23,77 @@ namespace Draughts.Api.Services
             _moveQueue = new();
         }
     
-        public ((int, int), (int, int)) GetMove(Board board, CancellationToken stoppingToken)
+        public Move GetMove(Board board, CancellationToken stoppingToken)
         {
             if (_moveQueue.TryDequeue(out var queuedMove))
                 return queuedMove;
 
-            _logger.LogInformation("Searching for the best move...");
+            _logger.LogInformation("Searching for the best turn...");
             var sw = Stopwatch.StartNew();
             
-            var moves = GetFullMoves(board, Side, null);
+            var turns = GetValidTurns(board, Side, null);
             var bestScore = 0;
-            List<Move> bestMoves = new();
+            List<Turn> bestTurns = new();
 
             var depth = 0;
-            while (!stoppingToken.IsCancellationRequested)
+            do
             {
                 depth += 2;
                 try
                 {
-                    var moveScores = new Dictionary<Move, int>();
-                    foreach (var move in moves)
-                        moveScores[move] = MiniMax(move, depth, int.MinValue, int.MaxValue, false, stoppingToken);
+                    foreach (var turn in turns)
+                        turn.Score = MiniMax(turn, depth, int.MinValue, int.MaxValue, false, stoppingToken);
 
-                    bestScore = moveScores.Max(x => x.Value);
-                    bestMoves = moveScores.Where(x => x.Value == bestScore).Select(x => x.Key).ToList();
+                    bestScore = turns.Max(x => x.Score);
+                    bestTurns = turns.Where(x => x.Score == bestScore).ToList();
 
                     if (depth == 16) break;
-                    moves.Sort((a, b) => -moveScores[a].CompareTo(moveScores[b]));
+                    turns.Sort((a, b) => -(a.Score.CompareTo(b.Score)));
                 }
                 catch (OperationCanceledException)
                 {
                     depth -= 2;
                 }
-            }
+            } while (!stoppingToken.IsCancellationRequested);
 
             sw.Stop();
-            _logger.LogInformation("Finished searching in {StopwatchElapsed}ms. Depth achieved: {Depth}, Best score: {BestScore}, Moves with this score: {BestMovesCount}", sw.ElapsedMilliseconds, depth, bestScore, bestMoves.Count);
+            _logger.LogInformation("Finished searching in {StopwatchElapsed}ms. Depth achieved: {Depth}, Best score: {BestScore}, Moves with this score: {BestMovesCount}", sw.ElapsedMilliseconds, depth, bestScore, bestTurns.Count);
 
-            var bestMove = bestMoves[_random.Next(0, bestMoves.Count)];
+            var bestTurn = bestTurns[_random.Next(0, bestTurns.Count)];
+
+            foreach (var move in bestTurn.Moves.Skip(1))
+                _moveQueue.Enqueue(move);
             
-            var nestedMove = bestMove.NestedMove;
-            while (nestedMove is not null)
-            {
-                _moveQueue.Enqueue((nestedMove.Origin, nestedMove.Destination));
-                nestedMove = nestedMove.NestedMove;
-            }
-            
-            return (bestMove.Origin, bestMove.Destination);
+            return bestTurn.Moves[0];
         }
 
-        private List<Move> GetFullMoves(Board board, int side, Move parentMove)
+        private List<Turn> GetValidTurns(Board board, int side, Turn parentTurn)
         {
             if (board.NextPlayer != side)
             {
-                if (parentMove is null) return null;
-                parentMove.BoardAfterAllNestedMovesMade = board;
-                return new() { parentMove };
+                parentTurn.BoardAfterTurn = board;
+                return new(){parentTurn};
             }
-
-            var fullMoves = new List<Move>();
-        
-            foreach (var move in board.ValidMoves.Select(x => new Move(x)))
+            
+            var turns = new List<Turn>();
+            
+            foreach (var move in board.ValidMoves)
             {
                 var newBoard = board.Clone();
-                newBoard.TakeMove(move.Origin, move.Destination);
+                newBoard.TakeMove(move);
 
-                var childFullMoves = GetFullMoves(newBoard, side, move);
+                var turn = parentTurn?.CloneAndAddMove(move) ?? new Turn(move);
+                var childTurns = GetValidTurns(newBoard, side, turn);
                 
-                var alternativeParentMoves = parentMove is null
-                    ? childFullMoves
-                    : childFullMoves.Select(childMove =>
-                    {
-                        var newParentMove = parentMove.Clone();
-                        newParentMove.NestedMove = childMove;
-                        newParentMove.BoardAfterAllNestedMovesMade = childMove.BoardAfterAllNestedMovesMade;
-                        return newParentMove;
-                    });
-
-                fullMoves.AddRange(alternativeParentMoves);
+                turns.AddRange(childTurns);
             }
 
-            return fullMoves;
+            return turns;
         }
 
-        private int MiniMax(Move move, int depth, int alpha, int beta, bool maximising, CancellationToken stoppingToken)
+        private int MiniMax(Turn turn, int depth, int alpha, int beta, bool maximising, CancellationToken stoppingToken)
         {
-            var board = move.BoardAfterAllNestedMovesMade;
+            var board = turn.BoardAfterTurn;
             
             if (depth == 0 || board.Winner != -1)
             {
@@ -118,7 +103,7 @@ namespace Draughts.Api.Services
             if (maximising)
             {
                 var score = int.MinValue;
-                var opponentMoves = GetFullMoves(board, board.NextPlayer, null);
+                var opponentMoves = GetValidTurns(board, board.NextPlayer, null);
                 foreach (var opponentMove in opponentMoves)
                 {
                     stoppingToken.ThrowIfCancellationRequested();
@@ -131,7 +116,7 @@ namespace Draughts.Api.Services
             else
             {
                 var score = int.MaxValue;
-                var opponentMoves = GetFullMoves(board, board.NextPlayer, null);
+                var opponentMoves = GetValidTurns(board, board.NextPlayer, null);
                 foreach (var opponentMove in opponentMoves)
                 {
                     stoppingToken.ThrowIfCancellationRequested();
@@ -183,28 +168,29 @@ namespace Draughts.Api.Services
             return pieceScore * 10 + advancementScore;
         }
 
-        private class Move
+        private class Turn
         {
-            public (int, int) Origin { get; private init; }
-            public (int, int) Destination { get; private init; }
-            public Move NestedMove { get; set; }
-            public Board BoardAfterAllNestedMovesMade { get; set; }
+            public List<Move> Moves { get; init; }
 
-            public Move(((int, int), (int, int)) move)
+            public Board BoardAfterTurn { get; set; }
+
+            public int Score { get; set; }
+
+            public Turn(Move move)
             {
-                Origin = move.Item1;
-                Destination = move.Item2;
+                Moves = new List<Move> { move };
             }
 
-            private Move() { }
+            private Turn() { }
 
-            public Move Clone()
+            public Turn CloneAndAddMove(Move move)
             {
-                return new Move()
+                return new Turn
                 {
-                    Origin = (Origin.Item1, Origin.Item2),
-                    Destination = (Destination.Item1, Destination.Item2),
-                    NestedMove = NestedMove?.Clone()
+                    Moves = new List<Move>(Moves)
+                    {
+                        move
+                    }
                 };
             }
         }

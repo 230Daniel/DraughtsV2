@@ -15,7 +15,7 @@ namespace Draughts.Api.Services
             _random = random;
         }
 
-        public ((int, int), (int, int)) GetMove(Board board, CancellationToken stoppingToken)
+        public Move GetMove(Board board, CancellationToken stoppingToken)
         {
             var moveIndex = _random.Next(0, board.ValidMoves.Count);
             return board.ValidMoves[moveIndex];
