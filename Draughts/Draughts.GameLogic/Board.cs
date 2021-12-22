@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 
 namespace Draughts.GameLogic;
 
@@ -70,6 +69,16 @@ public class Board
         Winner = -1;
         ValidMoves = GetValidMoves();
         TurnMoves = new();
+    }
+
+    private Board(int[][] tiles, int winner, int nextPlayer, List<((int, int), (int, int))> validMoves, bool nextMoveMustBeJump, bool shouldTurnMovesReset)
+    {
+        Tiles = tiles;
+        Winner = winner;
+        NextPlayer = nextPlayer;
+        ValidMoves = validMoves;
+        NextMoveMustBeJump = nextMoveMustBeJump;
+        _shouldTurnMovesReset = shouldTurnMovesReset;
     }
 
     public bool TakeMove((int, int) origin, (int, int) destination)
@@ -223,13 +232,14 @@ public class Board
 
     public Board Clone()
     {
-        var newBoard = (Board) FormatterServices.GetSafeUninitializedObject(typeof(Board));
-        newBoard.Tiles = Tiles.Select(x => (int[]) x.Clone()).ToArray();
-        newBoard.Winner = Winner;
-        newBoard.NextPlayer = NextPlayer;
-        newBoard.ValidMoves = ValidMoves.ConvertAll(x => ((x.Item1.Item1, x.Item1.Item2), (x.Item2.Item1, x.Item2.Item2)));
-        newBoard.NextMoveMustBeJump = NextMoveMustBeJump;
-        newBoard._shouldTurnMovesReset = _shouldTurnMovesReset;
-        return newBoard;
+        // Create a new board with the same properties as this one
+        // which can be altered independently.
+        return new Board(
+            Tiles.Select(x => (int[]) x.Clone()).ToArray(),
+            Winner,
+            NextPlayer,
+            ValidMoves.ConvertAll(x => ((x.Item1.Item1, x.Item1.Item2), (x.Item2.Item1, x.Item2.Item2))),
+            NextMoveMustBeJump,
+            _shouldTurnMovesReset);
     }
 }
