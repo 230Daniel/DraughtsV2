@@ -41,7 +41,7 @@ public interface IGame
 
     Task<bool> OnJoinAsync(string connectionId);
     Task<int> OnReadyAsync(string connectionId);
-    Task OnTakeMoveAsync(string connectionId, (int, int) origin, (int, int) destination);
+    Task OnTakeMoveAsync(string connectionId, Coords origin, Coords destination);
 
     Task OnLeaveAsync(string connectionId);
 }

@@ -86,7 +86,7 @@ public class ComputerGame : IGame
         return _humanPlayerSide;
     }
 
-    public async Task OnTakeMoveAsync(string connectionId, (int, int) origin, (int, int) destination)
+    public async Task OnTakeMoveAsync(string connectionId, Coords origin, Coords destination)
     {
         if (_status != GameStatus.Playing)
             return;
@@ -131,7 +131,7 @@ public class ComputerGame : IGame
         var move = _engine.GetMove(Board, stoppingTokenSource.Token);
         
         await minimumDelay;
-        await OnTakeMoveAsync("COMPUTER", move.Item1, move.Item2);
+        await OnTakeMoveAsync("COMPUTER", move.Origin, move.Destination);
     }
     
     private enum GameStatus

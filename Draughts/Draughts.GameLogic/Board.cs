@@ -21,7 +21,7 @@ public class Board
     /// <summary>
     ///     A list of moves which the next player could make.
     /// </summary>
-    public List<((int, int), (int, int))> ValidMoves { get; private set; }
+    public List<Move> ValidMoves { get; private set; }
 
     /// <summary>
     ///     A boolean which represents whether or not the next move must be a jump.
@@ -34,7 +34,7 @@ public class Board
     ///     More than one move can be taken per turn if the player has jumped a piece and can jump again.
     ///     This is useful for highlighting the previous move on the frontend.
     /// </summary>
-    public List<((int, int), (int, int))> TurnMoves { get; private set; }
+    public List<Move> TurnMoves { get; private set; }
 
     /// <summary>
     ///     The player who won the game.
@@ -71,7 +71,13 @@ public class Board
         TurnMoves = new();
     }
 
-    private Board(int[][] tiles, int winner, int nextPlayer, List<((int, int), (int, int))> validMoves, bool nextMoveMustBeJump, bool shouldTurnMovesReset)
+    private Board(
+        int[][] tiles, 
+        int winner, 
+        int nextPlayer, 
+        List<Move> validMoves, 
+        bool nextMoveMustBeJump, 
+        bool shouldTurnMovesReset)
     {
         Tiles = tiles;
         Winner = winner;
@@ -81,44 +87,46 @@ public class Board
         _shouldTurnMovesReset = shouldTurnMovesReset;
     }
 
-    public bool TakeMove((int, int) origin, (int, int) destination)
+    public bool TakeMove(Coords origin, Coords destination) 
+        => TakeMove(new Move(origin, destination));
+    
+    public bool TakeMove(Move move)
     {
-        var move = (origin, destination);
         if (!ValidMoves.Contains(move)) return false;
 
         if (TurnMoves is not null)
         {
             if (_shouldTurnMovesReset)
             {
-                TurnMoves = new();
+                TurnMoves.Clear();
                 _shouldTurnMovesReset = false;
             }
-            TurnMoves.Add((origin, destination));
+            TurnMoves.Add(move);
         }
 
-        var tileValue = Tiles[origin.Item2][origin.Item1];
+        var tileValue = Tiles[move.Origin.Y][move.Origin.X];
             
         // If a pawn has moved onto a home row, promote it
         var promoted = false;
-        if (tileValue < 2 && destination.Item2 is 0 or 7)
+        if (tileValue < 2 && move.Destination.Y is 0 or 7)
         {
             promoted = true;
             tileValue += 2;
         }
 
-        Tiles[destination.Item2][destination.Item1] = tileValue;
-        Tiles[origin.Item2][origin.Item1] = -1;
+        Tiles[move.Destination.Y][move.Destination.X] = tileValue;
+        Tiles[move.Origin.Y][move.Origin.X] = -1;
 
         // If the move was a take
-        var yDifference = destination.Item2 - origin.Item2; 
+        var yDifference = move.Destination.Y - move.Origin.Y; 
         if (Math.Abs(yDifference) == 2)
         {
             // Find the tile between the origin and destination and remove the piece
-            var jumpedY = origin.Item2 + yDifference / 2;
+            var jumpedY = move.Origin.Y + yDifference / 2;
                 
-            var jumpedX = destination.Item1 < origin.Item1
-                ? origin.Item1 + jumpedY % 2 - 1 // If the jump was to the left
-                : origin.Item1 + jumpedY % 2;    // If the jump was to the right
+            var jumpedX = move.Destination.X < move.Origin.X
+                ? move.Origin.X + jumpedY % 2 - 1 // If the jump was to the left
+                : move.Origin.X + jumpedY % 2;    // If the jump was to the right
                 
             Tiles[jumpedY][jumpedX] = -1;
 
@@ -126,7 +134,7 @@ public class Board
             // This is not allowed if the piece was promoted this turn
             if (!promoted)
             {
-                ValidMoves = GetValidMoves(true).Where(x => x.Item1 == destination).ToList();
+                ValidMoves = GetValidMoves(true).Where(x => x.Origin == move.Destination).ToList();
                 if (ValidMoves.Count > 0) return true;
             }
         }
@@ -139,10 +147,10 @@ public class Board
         return true;
     }
 
-    private List<((int, int), (int, int))> GetValidMoves(bool ignoreSingleMoves = false)
+    private List<Move> GetValidMoves(bool ignoreSingleMoves = false)
     {
-        var singleMoves = new List<((int, int), (int, int))>();
-        var jumpingMoves = new List<((int, int), (int, int))>();
+        var singleMoves = new List<Move>();
+        var jumpingMoves = new List<Move>();
 
         for (var y = 0; y < 8; y++)
         {
@@ -163,12 +171,12 @@ public class Board
                     if (y < 7 && offsetX > 0)
                     {
                         var newTile = Tiles[y + 1][offsetX - 1];
-                        if (newTile == -1) singleMoves.Add(((x, y), (offsetX - 1, y + 1)));
+                        if (newTile == -1) singleMoves.Add(new Move(new Coords(x, y), new Coords(offsetX - 1, y + 1)));
                             
                         // If the piece on the new tile is an opponent's piece and there's an empty tile to jump over it to
                         else if (newTile % 2 != NextPlayer && x > 0 && y < 6 && Tiles[y + 2][x - 1] == -1)
                         {
-                            jumpingMoves.Add(((x, y), (x - 1, y + 2)));
+                            jumpingMoves.Add(new Move(new Coords(x, y), new Coords(x - 1, y + 2)));
                         }
                     }
                     
@@ -176,12 +184,12 @@ public class Board
                     if (y < 7 && offsetX < 4)
                     {
                         var newTile = Tiles[y + 1][offsetX];
-                        if (newTile == -1) singleMoves.Add(((x, y), (offsetX, y + 1)));
+                        if (newTile == -1) singleMoves.Add(new Move(new Coords(x, y), new Coords(offsetX, y + 1)));
                             
                         // If the piece on the new tile is an opponent's piece and there's an empty tile to jump over it to
                         else if (newTile % 2 != NextPlayer && x < 3 && y < 6 && Tiles[y + 2][x + 1] == -1)
                         {
-                            jumpingMoves.Add(((x, y), (x + 1, y + 2)));
+                            jumpingMoves.Add(new Move(new Coords(x, y), new Coords(x + 1, y + 2)));
                         }
                     }
                 }
@@ -193,12 +201,12 @@ public class Board
                     if (y > 0 && offsetX > 0)
                     {
                         var newTile = Tiles[y - 1][offsetX - 1];
-                        if (newTile == -1) singleMoves.Add(((x, y), (offsetX - 1, y - 1)));
+                        if (newTile == -1) singleMoves.Add(new Move(new Coords(x, y), new Coords(offsetX - 1, y - 1)));
                             
                         // If the piece on the new tile is an opponent's piece and there's an empty tile to jump over it to
                         else if (newTile % 2 != NextPlayer && x > 0 && y > 1 && Tiles[y - 2][x - 1] == -1)
                         {
-                            jumpingMoves.Add(((x, y), (x - 1, y - 2)));
+                            jumpingMoves.Add(new Move(new Coords(x, y), new Coords(x - 1, y - 2)));
                         }
                     }
                     
@@ -206,12 +214,12 @@ public class Board
                     if (y > 0 && offsetX < 4)
                     {
                         var newTile = Tiles[y - 1][offsetX];
-                        if (newTile == -1) singleMoves.Add(((x, y), (offsetX, y - 1)));
+                        if (newTile == -1) singleMoves.Add(new Move(new Coords(x, y), new Coords(offsetX, y - 1)));
                             
                         // If the piece on the new tile is an opponent's piece and there's an empty tile to jump over it to
                         else if (newTile % 2 != NextPlayer && x < 3 && y > 1 && Tiles[y - 2][x + 1] == -1)
                         {
-                            jumpingMoves.Add(((x, y), (x + 1, y - 2)));
+                            jumpingMoves.Add(new Move(new Coords(x, y), new Coords(x + 1, y - 2)));
                         }
                     }
                 }
@@ -238,7 +246,7 @@ public class Board
             Tiles.Select(x => (int[]) x.Clone()).ToArray(),
             Winner,
             NextPlayer,
-            ValidMoves.ConvertAll(x => ((x.Item1.Item1, x.Item1.Item2), (x.Item2.Item1, x.Item2.Item2))),
+            new List<Move>(ValidMoves),
             NextMoveMustBeJump,
             _shouldTurnMovesReset);
     }

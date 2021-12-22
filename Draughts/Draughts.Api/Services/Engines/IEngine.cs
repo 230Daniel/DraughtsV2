@@ -7,6 +7,6 @@ namespace Draughts.Api.Services
     {
         public int Side { get; set; }
 
-        public ((int, int), (int, int)) GetMove(Board board, CancellationToken stoppingToken);
+        public Move GetMove(Board board, CancellationToken stoppingToken);
     }
 }

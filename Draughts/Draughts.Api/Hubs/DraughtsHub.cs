@@ -4,6 +4,7 @@ using AutoMapper;
 using Draughts.Api.Entities;
 using Draughts.Api.Models;
 using Draughts.Api.Services;
+using Draughts.GameLogic;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Draughts.Api.Hubs;
@@ -47,7 +48,7 @@ public class DraughtsHub : Hub
     public async Task TakeMoveAsync(string code, int[] origin, int[] destination)
     {
         var game = _gameService.GetGame(code);
-        await game.OnTakeMoveAsync(Context.ConnectionId, (origin[0], origin[1]), (destination[0], destination[1]));
+        await game.OnTakeMoveAsync(Context.ConnectionId, new Coords(origin[0], origin[1]), new Coords(destination[0], destination[1]));
     }
 
     [HubMethodName("LEAVE_GAME")]

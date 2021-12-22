@@ -17,12 +17,12 @@ public class AutoMapperProfile : Profile
 {
     public AutoMapperProfile()
     {
-        CreateMap<List<((int, int), (int, int))>, int[][][]>()
+        CreateMap<List<Move>, int[][][]>()
             .ConvertUsing(moves => moves.Select(move =>
                     new[]
                     {
-                        new[] {move.Item1.Item1, move.Item1.Item2},
-                        new[] {move.Item2.Item1, move.Item2.Item2},
+                        new[] {move.Origin.X, move.Origin.Y},
+                        new[] {move.Destination.X, move.Destination.Y},
                     }).ToArray()
             );
 
