@@ -111,19 +111,28 @@ export default class OnlineMultiplayer extends React.Component {
 	async onJoinGameCodeChanged(e) {
 		var code = e.target.value.toUpperCase();
 
+		// If the code length is 6 the user has finished inputting it
 		if (code.length === 6) {
+
+			// Show a loading message
 			this.setState({ joinGameCode: code, joiningGame: true, invalidGameCode: false });
 
+			// If this code matches the "Create Game" code reject it to avoid error state
 			if (code === this.state.createGameCode) {
 				this.setState({ invalidGameCode: true, joiningGame: false });
 				return;
 			}
 
+			// Send the request to join the game
 			this.gameCode = code;
 			var response = await window._connection.invoke("JOIN_GAME", code);
+
+			// If the request fails show an error message
 			if (!response) {
 				this.setState({ invalidGameCode: true, joiningGame: false });
 			}
+
+			// If the request succeeded the server will eventually send GAME_STARTED so we're done for now
 		} else {
 			this.setState({ joinGameCode: code, invalidGameCode: false });
 		}

@@ -30,12 +30,14 @@ export default class Board extends React.Component {
 		var offsetMoveToAnimate;
 		var moveToAnimateJumped;
 
-		// *clears throat*
+		// If there is a move to animate calculate the movement that will need to be shown on the board
 		if (this.props.moveToAnimate) {
 			offsetMoveToAnimate = [
 				[(2 * this.props.moveToAnimate[0][0]) + ((this.props.moveToAnimate[0][1] + 1) % 2), this.props.moveToAnimate[0][1]],
 				[(2 * this.props.moveToAnimate[1][0]) + ((this.props.moveToAnimate[1][1] + 1) % 2), this.props.moveToAnimate[1][1]]
 			];
+
+			// If the move was a jump (diff in Y is 2) calculate the tile that was jumped, this piece will need to fade out on the board
 			if (Math.abs(this.props.moveToAnimate[0][1] - this.props.moveToAnimate[1][1]) === 2) {
 				var jumpedX = offsetMoveToAnimate[0][0] > offsetMoveToAnimate[1][0]
 					? offsetMoveToAnimate[0][0] - 1
@@ -93,14 +95,15 @@ export default class Board extends React.Component {
 					var destination = possibleSelectedTileMoves && possibleSelectedTileMoves.some(move => areCoordinatesEqual(move[1], coords));
 					var forcedDestination = destination && this.props.board.nextMoveMustBeJump;
 
+					// If this tile needs to be animated calculate the transform required
 					var transformX = 0;
 					var transformY = 0;
 					if (this.props.moveToAnimate && areCoordinatesEqual(this.props.moveToAnimate[0], coords)) {
-						console.log(offsetMoveToAnimate);
 						transformX = (offsetMoveToAnimate[1][0] - x) * (this.props.flip ? -1 : 1);
 						transformY = (offsetMoveToAnimate[1][1] - y) * (this.props.flip ? -1 : 1);
 					}
 
+					// If this tile's piece was taken we pass this information to the piece to animate the shrink and fade
 					var taken = moveToAnimateJumped && areCoordinatesEqual(moveToAnimateJumped, [x, y]);
 
 					// Pass all of the calculated values to a Tile component and add it to the row
