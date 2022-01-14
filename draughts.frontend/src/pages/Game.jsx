@@ -89,16 +89,22 @@ class Game extends React.Component {
 
 	onGameUpdated(game) {
 
+		// If this is the first game updated set the board as well as the game
 		if (!this.state.game) {
 			this.setState({ game: game, board: game.board });
 			return;
 		}
 
+		// Update the game state but not the board
 		this.setState({ game: game });
 
+		// Find the move to animate and tell the board to animate it.
 		var moveToAnimate = game.board.turnMoves.at(-1);
 		if (moveToAnimate) {
 			this.setState({ moveToAnimate: moveToAnimate });
+
+			// After a set delay (the animation should have completed), update the board.
+			// If we updated the board immediately the Board would try to animate the move starting from the new board state.
 			setTimeout(() => {
 				this.setState({ board: game.board, moveToAnimate: null });
 			}, 210);

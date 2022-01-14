@@ -13,6 +13,8 @@ export default class Piece extends React.Component {
 			<div
 				className={styles.container}
 				style={{
+					// If this piece is animating we set the transform and opacity CSS properties depending on the values passed from the Board.
+					// These changes are made smoothly thanks to a CSS transition property, resulting in a clean animation.
 					transform: `translate(${this.props.transformX * 100}%, ${this.props.transformY * 100}%) scale(${this.props.taken ? 0 : 1})`,
 					opacity: this.props.taken ? 0 : 1,
 					zIndex: this.props.transformX === 0 ? 100 : 200
