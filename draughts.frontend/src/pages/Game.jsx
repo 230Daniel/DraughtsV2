@@ -52,9 +52,20 @@ class Game extends React.Component {
 
 	renderMessageBox() {
 		// If someone has won display a message box with the winner
+		// If the other player has left display an error message
+		// If neither condition is met render no message box
 		if (this.state.game.board.winner !== -1) {
+
+			// If this is a local multiplayer game display Black/White won!
+			// Otherwise display Victory! or Defeat!
+			var winMessage = null;
+			if (this.state.game.type === 0)
+				winMessage = `${this.state.game.board.winner === 0 ? "Black" : "White"} won!`;
+			else
+				winMessage = this.state.game.board.winner === this.state.playerNumber ? "Victory!" : "Defeat!";
+
 			return (
-				<MessageBox minWidth="350px" title={`${this.state.game.board.winner === 0 ? "Black" : "White"} won!`} link="/play" linkLabel="Back" />
+				<MessageBox minWidth="350px" title={winMessage} link="/play" linkLabel="Back" />
 			);
 		} else if (this.state.playerLeft) {
 			return (
