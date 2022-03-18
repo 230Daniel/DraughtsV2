@@ -74,7 +74,7 @@ public class LocalMultiplayerGame : IGame
         if (Board.Winner != -1)
         {
             _status = GameStatus.Finished;
-            _logger.LogInformation("Local Multiplayer game {Code} won by player {Winner}", Code, Board.Winner);
+            _logger.LogInformation("Local Multiplayer game {Code} won by {Winner}", Code, Board.Winner == 0 ? "Black" : "White");
         }
         await Clients.SendAsync("GAME_UPDATED", GameModel);
     }
