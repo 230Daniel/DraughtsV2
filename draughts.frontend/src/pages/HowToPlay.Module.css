@@ -1,0 +1,24 @@
+.container {
+	margin: 40px;
+}
+
+.container > h1 {
+	margin-top: 0px;
+	margin-bottom: 10px;
+}
+
+.container > h2 {
+	margin-top: 30px;
+	margin-left: 20px;
+}
+
+.container > p {
+	margin-left: 40px;
+}
+
+.link {
+	display: flex;
+	margin-top: 30px;
+	margin-left: 20px;
+	font-size: 18px;
+}

@@ -58,10 +58,8 @@ class Navbar extends React.Component {
 	renderItems() {
 		return (
 			<>
-				<Link to="/play">Play</Link>
-				<Link to="/play/local-multiplayer">Local</Link>
-				<Link to="/play/online-multiplayer">Online</Link>
-				<Link to="/play/computer">Computer</Link>
+				<Link to="/how-to-play">How to Play</Link>
+				<Link to="/play">Find a Game</Link>
 			</>
 		);
 	}
