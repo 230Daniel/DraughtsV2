@@ -11,7 +11,7 @@ namespace Draughts.Api.Services
     public class MiniMaxEngine : IEngine
     {
         public int Side { get; set; }
-        
+
         private readonly ILogger<MiniMaxEngine> _logger;
         private readonly Random _random;
         private readonly Queue<Move> _moveQueue;
@@ -22,15 +22,14 @@ namespace Draughts.Api.Services
             _random = random;
             _moveQueue = new();
         }
-    
+
         public Move GetMove(Board board, CancellationToken stoppingToken)
         {
             if (_moveQueue.TryDequeue(out var queuedMove))
                 return queuedMove;
 
-            _logger.LogInformation("Searching for the best turn...");
             var sw = Stopwatch.StartNew();
-            
+
             var turns = GetValidTurns(board, Side, null);
             var bestScore = 0;
             List<Turn> bestTurns = new();
@@ -63,7 +62,7 @@ namespace Draughts.Api.Services
 
             foreach (var move in bestTurn.Moves.Skip(1))
                 _moveQueue.Enqueue(move);
-            
+
             return bestTurn.Moves[0];
         }
 
@@ -74,9 +73,9 @@ namespace Draughts.Api.Services
                 parentTurn.BoardAfterTurn = board;
                 return new(){parentTurn};
             }
-            
+
             var turns = new List<Turn>();
-            
+
             foreach (var move in board.ValidMoves)
             {
                 var newBoard = board.Clone();
@@ -84,7 +83,7 @@ namespace Draughts.Api.Services
 
                 var turn = parentTurn?.CloneAndAddMove(move) ?? new Turn(move);
                 var childTurns = GetValidTurns(newBoard, side, turn);
-                
+
                 turns.AddRange(childTurns);
             }
 
@@ -94,7 +93,7 @@ namespace Draughts.Api.Services
         private int MiniMax(Turn turn, int depth, int alpha, int beta, bool maximising, CancellationToken stoppingToken)
         {
             var board = turn.BoardAfterTurn;
-            
+
             if (depth == 0 || board.Winner != -1)
             {
                 return RateBoard(board, depth);
@@ -124,7 +123,7 @@ namespace Draughts.Api.Services
                     if (score <= alpha) break;
                     beta = Math.Min(beta, score);
                 }
-                    
+
                 return score;
             }
         }
@@ -133,10 +132,10 @@ namespace Draughts.Api.Services
         {
             if (board.Winner == Side) return int.MaxValue - 16 + depth;
             if (board.Winner == 1 - Side) return int.MinValue + 16 - depth;
-            
+
             var pieceScore = 0;
             var advancementScore = 0;
-            
+
             for (var y = 0; y < 8; y++)
             {
                 for (var x = 0; x < 4; x++)
@@ -144,12 +143,12 @@ namespace Draughts.Api.Services
                     var tile = board.Tiles[y][x];
                     if (tile == -1) continue;
 
-                    var advancement = tile > 1 
-                        ? 7 
+                    var advancement = tile > 1
+                        ? 7
                         : tile % 2 == 0
                             ? y
                             : 7 - y;
-                    
+
                     if (advancement == 0) advancement = 7;
 
                     if (board.Tiles[y][x] % 2 == Side)
@@ -164,7 +163,7 @@ namespace Draughts.Api.Services
                     }
                 }
             }
-            
+
             return pieceScore * 10 + advancementScore;
         }
 
