@@ -28,37 +28,46 @@ namespace Draughts.Api.Services
             if (_moveQueue.TryDequeue(out var queuedMove))
                 return queuedMove;
 
-            var sw = Stopwatch.StartNew();
-
             var turns = GetValidTurns(board, Side, null);
-            var bestScore = 0;
-            List<Turn> bestTurns = new();
+            Turn bestTurn;
 
-            var depth = 0;
-            do
+            if (turns.Count == 1)
             {
-                depth += 2;
-                try
+                bestTurn = turns[0];
+            }
+            else
+            {
+                var bestScore = 0;
+                List<Turn> bestTurns = new();
+
+                var sw = Stopwatch.StartNew();
+
+                var depth = 0;
+                do
                 {
-                    foreach (var turn in turns)
-                        turn.Score = MiniMax(turn, depth, int.MinValue, int.MaxValue, false, stoppingToken);
+                    depth += 2;
+                    try
+                    {
+                        foreach (var turn in turns)
+                            turn.Score = MiniMax(turn, depth, int.MinValue, int.MaxValue, false, stoppingToken);
 
-                    bestScore = turns.Max(x => x.Score);
-                    bestTurns = turns.Where(x => x.Score == bestScore).ToList();
+                        bestScore = turns.Max(x => x.Score);
+                        bestTurns = turns.Where(x => x.Score == bestScore).ToList();
 
-                    if (depth == 16) break;
-                    turns.Sort((a, b) => -(a.Score.CompareTo(b.Score)));
-                }
-                catch (OperationCanceledException)
-                {
-                    depth -= 2;
-                }
-            } while (!stoppingToken.IsCancellationRequested);
+                        if (depth == 16) break;
+                        turns.Sort((a, b) => -(a.Score.CompareTo(b.Score)));
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        depth -= 2;
+                    }
+                } while (!stoppingToken.IsCancellationRequested);
 
-            sw.Stop();
-            _logger.LogInformation("Finished searching in {StopwatchElapsed}ms. Depth achieved: {Depth}, Best score: {BestScore}, Moves with this score: {BestMovesCount}", sw.ElapsedMilliseconds, depth, bestScore, bestTurns.Count);
+                sw.Stop();
+                _logger.LogInformation("Finished searching in {StopwatchElapsed}ms. Depth achieved: {Depth}, Best score: {BestScore}, Moves with this score: {BestMovesCount}", sw.ElapsedMilliseconds, depth, bestScore, bestTurns.Count);
 
-            var bestTurn = bestTurns[_random.Next(0, bestTurns.Count)];
+                bestTurn = bestTurns[_random.Next(0, bestTurns.Count)];
+            }
 
             foreach (var move in bestTurn.Moves.Skip(1))
                 _moveQueue.Enqueue(move);
