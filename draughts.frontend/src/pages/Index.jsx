@@ -12,7 +12,6 @@ export default class Index extends React.Component {
 					<h1 className={styles.title}>Draughts</h1>
 					<h2 className={styles.subtitle}><i>Because Chess would be too hard</i></h2>
 					<Link className={styles.link} to="/play">Find a game ➔</Link>
-					<Link className={styles.link} to="/how-to-play">How to play ➔</Link>
 				</div>
 			</div>
 		);
