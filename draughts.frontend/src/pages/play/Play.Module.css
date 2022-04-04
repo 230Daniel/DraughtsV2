@@ -64,10 +64,15 @@
 	align-items: center;
 	justify-content: center;
 	flex-grow: 1;
+	object-fit: contain;
 }
 
 .mode > div > img{
-	filter: invert(93%);
+	width: 100%;
+	height: 100%;
+	margin: 20px;
+	object-fit: contain;
+	filter: invert(70%);
 }
 
 .box{

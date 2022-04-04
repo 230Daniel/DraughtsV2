@@ -10,7 +10,7 @@ export default class Computer extends React.Component {
 		this.state = {
 			redirect: null,
 
-			side: -1,
+			side: 0,
 			engine: 0,
 			engineThinkingTime: 2000
 		};
@@ -28,7 +28,7 @@ export default class Computer extends React.Component {
 			<div className={styles.container}>
 				<div className={styles.row}>
 					<div className={styles.box}>
-						<span className={styles.title}>Create Computer Game (WIP)</span>
+						<span className={styles.title}>Create Computer Game</span>
 						<form onSubmit={(e) => this.onSubmitCreateGame(e)}>
 							<div className={styles.inputGroup}>
 								<label>Play as side</label>
