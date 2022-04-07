@@ -15,12 +15,14 @@ public enum GameType
     OnlineMultiplayer,
     Computer
 }
+
 public enum CreatorSide
 {
     Random = -1,
     Black = 0,
     White = 1
 }
+
 public enum Engine
 {
     MiniMax = 0,

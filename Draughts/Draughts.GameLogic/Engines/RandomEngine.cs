@@ -16,6 +16,7 @@ public class RandomEngine : IEngine
 
     public Move GetMove(Board board, CancellationToken stoppingToken)
     {
+        // When asked to get a move, choose a random move from the valid moves.
         var moveIndex = _random.Next(0, board.ValidMoves.Count);
         return board.ValidMoves[moveIndex];
     }
