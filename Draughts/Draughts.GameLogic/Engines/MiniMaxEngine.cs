@@ -53,7 +53,7 @@ public class MiniMaxEngine : IEngine
             var depth = 2;
             while (!stoppingToken.IsCancellationRequested && depth <= 16)
             {
-                depth += 3;
+                depth += 2;
                 try
                 {
                     foreach (var turn in turns)
@@ -64,7 +64,7 @@ public class MiniMaxEngine : IEngine
                 }
                 catch (OperationCanceledException)
                 {
-                    depth -= 3;
+                    depth -= 2;
                 }
             }
 
