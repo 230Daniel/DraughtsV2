@@ -21,14 +21,14 @@ public class AutoMapperProfile : Profile
             .ConvertUsing(moves => moves.Select(move =>
                     new[]
                     {
-                        new[] {move.Origin.X, move.Origin.Y},
-                        new[] {move.Destination.X, move.Destination.Y},
+                        new[] { move.Origin.X, move.Origin.Y },
+                        new[] { move.Destination.X, move.Destination.Y },
                     }).ToArray()
             );
 
         CreateMap<int, TimeSpan>()
             .ConvertUsing(integer => TimeSpan.FromMilliseconds(integer));
-            
+
         CreateMap<Board, BoardModel>();
         CreateMap<IGame, GameModel>();
         CreateMap<CreateGameModel, GameOptions>()

@@ -12,7 +12,7 @@ public class AntiforgeryController : Controller
     {
         _antiforgery = antiforgery;
     }
-        
+
     [HttpGet]
     public IActionResult Get()
     {

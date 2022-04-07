@@ -53,7 +53,7 @@ public class ComputerGame : IGame
         if (_status != GameStatus.WaitingForJoin) return false;
         _status = GameStatus.WaitingForReady;
 
-        _humanPlayerSide = (int) Options.CreatorSide;
+        _humanPlayerSide = (int)Options.CreatorSide;
         if (_humanPlayerSide == -1) _humanPlayerSide = _random.Next(0, 2);
 
         // Set the player ID and tell the client to go to the game page

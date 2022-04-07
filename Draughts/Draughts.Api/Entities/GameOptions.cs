@@ -9,21 +9,18 @@ public class GameOptions
     public Engine Engine { get; set; }
     public TimeSpan EngineThinkingTime { get; set; }
 }
-
 public enum GameType
 {
     LocalMultiplayer,
     OnlineMultiplayer,
     Computer
 }
-
 public enum CreatorSide
 {
     Random = -1,
     Black = 0,
     White = 1
 }
-
 public enum Engine
 {
     MiniMax = 0,

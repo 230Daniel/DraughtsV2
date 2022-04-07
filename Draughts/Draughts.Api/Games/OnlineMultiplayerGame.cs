@@ -48,7 +48,7 @@ public class OnlineMultiplayerGame : IGame
         if (_player1 is null && _player2 is null)
         {
             // If this is the first player to join set their side depending on the game options
-            var creatorSide = (int) Options.CreatorSide;
+            var creatorSide = (int)Options.CreatorSide;
             if (creatorSide == -1) creatorSide = _random.Next(0, 2);
 
             if (creatorSide == 0) _player1 = new Player(connectionId);

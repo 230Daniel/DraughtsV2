@@ -15,12 +15,12 @@ namespace Draughts.Api;
 public class Startup
 {
     private readonly IConfiguration _configuration;
-        
+
     public Startup(IConfiguration configuration)
     {
         _configuration = configuration;
     }
-        
+
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddCors(options =>
@@ -36,15 +36,15 @@ public class Startup
                         .Build());
 
             // In production we can specify origins via the config file.
-            options.AddPolicy("Production", 
-                builder => 
+            options.AddPolicy("Production",
+                builder =>
                     builder.WithOrigins(_configuration.GetSection("Cors").Get<string[]>())
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials()
                         .Build());
         });
-            
+
         // We use an anti-forgery system to protect against CSRF attacks.
         // The token is received via a GET request (which only our frontend will be able to make)
         // and is sent with every subsequent request to be validated by the server.
@@ -59,7 +59,7 @@ public class Startup
 
         services.AddMvc(options =>
             options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
-            
+
         services.AddControllers();
 
         services.AddSignalR();
@@ -73,7 +73,7 @@ public class Startup
         services.AddTransient<RandomEngine>();
         services.AddAutoMapper(typeof(Startup).Assembly);
     }
-        
+
     public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         if (env.IsDevelopment()) app.UseCors("Development");

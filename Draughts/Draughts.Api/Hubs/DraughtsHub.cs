@@ -19,7 +19,7 @@ public class DraughtsHub : Hub
         _mapper = mapper;
         _gameService = gameService;
     }
-        
+
     [HubMethodName("CREATE_GAME")]
     public string CreateGame(CreateGameModel createGameModel)
     {
@@ -35,7 +35,7 @@ public class DraughtsHub : Hub
         if (game is null) return false;
         return await game.OnJoinAsync(Context.ConnectionId);
     }
-        
+
     [HubMethodName("READY")]
     public async Task<int> ReadyAsync(string code)
     {
@@ -43,7 +43,7 @@ public class DraughtsHub : Hub
         if (game is null) return -1;
         return await game.OnReadyAsync(Context.ConnectionId);
     }
-        
+
     [HubMethodName("TAKE_MOVE")]
     public async Task TakeMoveAsync(string code, int[] origin, int[] destination)
     {
@@ -59,7 +59,7 @@ public class DraughtsHub : Hub
         await game.OnLeaveAsync(Context.ConnectionId);
         _gameService.RemoveRedundantGames();
     }
-        
+
     public override async Task OnDisconnectedAsync(Exception exception)
     {
         var games = _gameService.GetGamesForConnection(Context.ConnectionId);

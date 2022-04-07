@@ -20,7 +20,7 @@ public class Program
                 webBuilder.UseStartup<Startup>();
             })
             .Build();
-            
+
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(host.Services.GetRequiredService<IConfiguration>())
             .CreateLogger();

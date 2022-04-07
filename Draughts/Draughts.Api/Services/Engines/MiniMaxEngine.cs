@@ -80,7 +80,7 @@ namespace Draughts.Api.Services
             if (board.NextPlayer != side)
             {
                 parentTurn.BoardAfterTurn = board;
-                return new(){parentTurn};
+                return new() { parentTurn };
             }
 
             var turns = new List<Turn>();
@@ -152,22 +152,21 @@ namespace Draughts.Api.Services
                     var tile = board.Tiles[y][x];
                     if (tile == -1) continue;
 
-                    var advancement = tile > 1
-                        ? 7
-                        : tile % 2 == 0
-                            ? y
-                            : 7 - y;
+                    var advancement = tile > 1 ?
+                        7
+                        : tile % 2 == 0 ? y
+                        : 7 - y;
 
                     if (advancement == 0) advancement = 7;
 
                     if (board.Tiles[y][x] % 2 == Side)
                     {
-                        pieceScore ++;
+                        pieceScore++;
                         advancementScore += advancement;
                     }
                     else
                     {
-                        pieceScore --;
+                        pieceScore--;
                         advancementScore -= advancement;
                     }
                 }

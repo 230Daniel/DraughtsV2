@@ -13,34 +13,36 @@ public interface IGame
     ///     1 = Online multiplayer
     /// </summary>
     int Type { get; }
-        
+
     /// <summary>
     ///     The game code for joining.
     /// </summary>
     string Code { get; set; }
-        
+
     /// <summary>
     ///     The game options set when the game was created.
     /// </summary>
     GameOptions Options { get; set; }
-        
+
     /// <summary>
     ///     The current Draughts board.
     /// </summary>
     Board Board { get; }
-        
+
     /// <summary>
     ///     A list of connected players.
     /// </summary>
     IEnumerable<string> PlayerConnectionIds { get; }
-        
+
     /// <summary>
     ///     True if the game has finished and can be disposed.
     /// </summary>
     public bool IsRedundant { get; }
 
     Task<bool> OnJoinAsync(string connectionId);
+
     Task<int> OnReadyAsync(string connectionId);
+
     Task OnTakeMoveAsync(string connectionId, Coords origin, Coords destination);
 
     Task OnLeaveAsync(string connectionId);

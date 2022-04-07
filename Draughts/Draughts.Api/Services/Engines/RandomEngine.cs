@@ -7,9 +7,9 @@ namespace Draughts.Api.Services
     public class RandomEngine : IEngine
     {
         public int Side { get; set; }
-        
+
         private readonly Random _random;
-    
+
         public RandomEngine(Random random)
         {
             _random = random;
