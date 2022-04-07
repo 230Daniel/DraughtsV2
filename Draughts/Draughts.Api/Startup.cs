@@ -2,6 +2,7 @@ using System;
 using Draughts.Api.Games;
 using Draughts.Api.Hubs;
 using Draughts.Api.Services;
+using Draughts.GameLogic.Engines;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
