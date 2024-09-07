@@ -1,0 +1,28 @@
+name: 'draughts'
+
+services:
+    api:
+        container_name: draughts-api
+        image: 230daniel/draughts-api
+        volumes:
+            - './config/backend.json:/app/appsettings.json:ro'
+            - './aspnet-data:/root/.aspnet'
+            - './backend-logs:/app/logs'
+        restart: unless-stopped
+        logging:
+            driver: "local"
+            options:
+                max-size: 50M
+
+    frontend:
+        container_name: draughts-frontend
+        image: 230daniel/draughts-frontend
+        depends_on:
+            - 'api'
+        volumes:
+            - './config/frontend.js:/build/config.js:ro'
+            - './config/nginx.conf:/etc/nginx/nginx.conf:ro'
+            - '/etc/letsencrypt:/etc/letsencrypt:ro'
+        ports:
+            - '8080:8080'
+        restart: unless-stopped
