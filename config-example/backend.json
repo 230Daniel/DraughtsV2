@@ -1,0 +1,29 @@
+{
+	"Cors": [
+		"https://utili.xyz:8080"
+	],
+	"Serilog": {
+		"MinimumLevel": "Information",
+		"Enrich": [
+			"FromLogContext"
+		],
+		"WriteTo": [
+			{
+				"Name": "Console",
+				"Args": {
+					"restrictedToMinimumLevel": "Information",
+					"outputTemplate": "[{Timestamp:HH:mm:ss} {Level:u3}] {Message}{NewLine}{Exception}"
+				}
+			},
+			{
+				"Name": "File",
+				"Args": {
+					"path": "Logs/log_.txt",
+					"rollingInterval": "Day",
+					"restrictedToMinimumLevel": "Information",
+					"outputTemplate": "[{Timestamp:HH:mm:ss} {Level:u3}] {Message}{NewLine}{Exception}"
+				}
+			}
+		]
+	}
+}

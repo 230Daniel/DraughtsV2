@@ -2,6 +2,7 @@
 Draughts/Draughts.Api/appsettings.json
 Draughts/Draughts.sln.DotSettings.*
 draughts.frontend/public/Config.js
+config/*
 
 # Log files
 Draughts/Draughts.Api/Logs
