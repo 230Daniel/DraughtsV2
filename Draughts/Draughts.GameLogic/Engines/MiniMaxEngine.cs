@@ -63,7 +63,7 @@ public class MiniMaxEngine : IEngine
                     bestTurns = turns.Where(x => x.Score == bestScore).ToList();
 
                     // The next iteration will cull more nodes in alpha-beta pruning if we search better moves first.
-                    turns = turns.OrderBy(x => x.Score);
+                    turns = turns.OrderBy(x => x.Score).ToList();
                 }
                 catch (OperationCanceledException)
                 {
