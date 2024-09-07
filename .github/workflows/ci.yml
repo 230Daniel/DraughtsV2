@@ -30,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         context: ./Draughts
-        file: ./Draughts.Api/Dockerfile
+        file: ./Dockerfile
         platforms: linux/amd64,linux/arm64
         tags: 230daniel/draughts-api:latest
         push: true
